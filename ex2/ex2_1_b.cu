@@ -4,6 +4,10 @@
 //for (; p<=3; p++);
   //      cout << *p;
 
+double option1() {
+
+}
+
 int main(void)
 {
   int N = 1000;
@@ -15,11 +19,15 @@ int main(void)
   double runtime = 0.0, max_runtime = 0.0, min_runtime = 100.0;
 
   for (; i<num_tests; i++) {
-    double *d_x;
-    timer.reset();
-
+    double *x, *y, *d_x, *d_y, *d_x2, *d_y2;
+    x = (double*)malloc(N*sizeof(double));
+    y = (double*)malloc(N*sizeof(double));
     cudaMalloc(&d_x, N*sizeof(double));
-    cudaFree(d_x); 
+    cudaMalloc(&d_y, N*sizeof(double));
+    
+    timer.reset();
+    // Actual benchmark
+    cudaMemcpy(d_x, x, N*sizeof(double), cudaMemcpyHostToDevice);
     cudaDeviceSynchronize();
 
     runtime = timer.get();
@@ -41,6 +49,7 @@ int main(void)
   std::cout << "Average runtime; " << total_time/i << std::endl;
   std::cout << "Maximum runtime: " << max_runtime << std::endl;
   std::cout << "Minimum runtime: " << min_runtime << std::endl;
+
 
   return EXIT_SUCCESS;
 }
