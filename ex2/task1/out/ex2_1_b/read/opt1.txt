@@ -1,0 +1,168 @@
+(1) Elapsed: 0.071781 s
+(2) Elapsed: 3e-06 s
+(3) Elapsed: 1e-06 s
+(4) Elapsed: 1e-06 s
+(5) Elapsed: 1e-06 s
+(6) Elapsed: 1e-06 s
+(7) Elapsed: 1e-06 s
+(8) Elapsed: 1e-06 s
+(9) Elapsed: 1e-06 s
+(10) Elapsed: 1e-06 s
+
+Results after 10 tests:
+Total runtime: 0.071792
+Average runtime; 0.0071792
+Maximum runtime: 0.071781
+Minimum runtime: 1e-06
+
+Time needed for vector init on host: 1e-06
+
+
+0: 0 | 255
+1: 1 | 254
+2: 2 | 253
+3: 3 | 252
+(1) Elapsed: 0.047553 s
+(2) Elapsed: 2e-06 s
+(3) Elapsed: 1e-06 s
+(4) Elapsed: 1e-06 s
+(5) Elapsed: 1e-06 s
+(6) Elapsed: 1e-06 s
+(7) Elapsed: 1e-06 s
+(8) Elapsed: 1e-06 s
+(9) Elapsed: 1e-06 s
+(10) Elapsed: 1e-06 s
+
+Results after 10 tests:
+Total runtime: 0.047563
+Average runtime; 0.0047563
+Maximum runtime: 0.047553
+Minimum runtime: 1e-06
+
+Time needed for vector init on host: 5e-06
+
+
+0: 0 | 1023
+1: 1 | 1022
+2: 2 | 1021
+3: 3 | 1020
+(1) Elapsed: 0.043604 s
+(2) Elapsed: 2e-06 s
+(3) Elapsed: 2e-06 s
+(4) Elapsed: 1e-06 s
+(5) Elapsed: 1e-06 s
+(6) Elapsed: 1e-06 s
+(7) Elapsed: 1e-06 s
+(8) Elapsed: 1e-06 s
+(9) Elapsed: 1e-06 s
+(10) Elapsed: 1e-06 s
+
+Results after 10 tests:
+Total runtime: 0.043615
+Average runtime; 0.0043615
+Maximum runtime: 0.043604
+Minimum runtime: 1e-06
+
+Time needed for vector init on host: 1.7e-05
+
+
+0: 0 | 4095
+1: 1 | 4094
+2: 2 | 4093
+3: 3 | 4092
+(1) Elapsed: 0.026687 s
+(2) Elapsed: 3e-06 s
+(3) Elapsed: 1e-06 s
+(4) Elapsed: 1e-06 s
+(5) Elapsed: 1e-06 s
+(6) Elapsed: 1e-06 s
+(7) Elapsed: 1e-06 s
+(8) Elapsed: 1e-06 s
+(9) Elapsed: 1e-06 s
+(10) Elapsed: 1e-06 s
+
+Results after 10 tests:
+Total runtime: 0.026698
+Average runtime; 0.0026698
+Maximum runtime: 0.026687
+Minimum runtime: 1e-06
+
+Time needed for vector init on host: 3.6e-05
+
+
+0: 0 | 8191
+1: 1 | 8190
+2: 2 | 8189
+3: 3 | 8188
+(1) Elapsed: 0.000131 s
+(2) Elapsed: 2e-06 s
+(3) Elapsed: 1e-06 s
+(4) Elapsed: 1e-06 s
+(5) Elapsed: 1e-06 s
+(6) Elapsed: 1e-06 s
+(7) Elapsed: 1e-06 s
+(8) Elapsed: 1e-06 s
+(9) Elapsed: 1e-06 s
+(10) Elapsed: 1e-06 s
+
+Results after 10 tests:
+Total runtime: 0.000141
+Average runtime; 1.41e-05
+Maximum runtime: 0.000131
+Minimum runtime: 1e-06
+
+Time needed for vector init on host: 0.000134
+
+
+0: 0 | 32767
+1: 1 | 32766
+2: 2 | 32765
+3: 3 | 32764
+(1) Elapsed: 0.000232 s
+(2) Elapsed: 1e-06 s
+(3) Elapsed: 1e-06 s
+(4) Elapsed: 1e-06 s
+(5) Elapsed: 1e-06 s
+(6) Elapsed: 1e-06 s
+(7) Elapsed: 1e-06 s
+(8) Elapsed: 1e-06 s
+(9) Elapsed: 1e-06 s
+(10) Elapsed: 1e-06 s
+
+Results after 10 tests:
+Total runtime: 0.000241
+Average runtime; 2.41e-05
+Maximum runtime: 0.000232
+Minimum runtime: 1e-06
+
+Time needed for vector init on host: 0.000308
+
+
+0: 0 | 65535
+1: 1 | 65534
+2: 2 | 65533
+3: 3 | 65532
+(1) Elapsed: 0.000433 s
+(2) Elapsed: 1e-06 s
+(3) Elapsed: 1e-06 s
+(4) Elapsed: 1e-06 s
+(5) Elapsed: 1e-06 s
+(6) Elapsed: 1e-06 s
+(7) Elapsed: 1e-06 s
+(8) Elapsed: 1e-06 s
+(9) Elapsed: 1e-06 s
+(10) Elapsed: 1e-06 s
+
+Results after 10 tests:
+Total runtime: 0.000442
+Average runtime; 4.42e-05
+Maximum runtime: 0.000433
+Minimum runtime: 1e-06
+
+Time needed for vector init on host: 0.000572
+
+
+0: 0 | 131071
+1: 1 | 131070
+2: 2 | 131069
+3: 3 | 131068
