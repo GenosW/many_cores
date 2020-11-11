@@ -27,22 +27,31 @@ __global__ void initKernel(double* arr, const size_t N, const double val)
 __global__ void vectorAddOffset(const double* x, const double* y, double* z, const size_t N, const size_t k) {
   const size_t stride = blockDim.x * gridDim.x;
 
-  for (size_t tid = threadIdx.x + blockIdx.x * blockDim.x; tid < N-k; tid += stride)
-    z[tid+k] = x[tid+k] + y[tid+k];
+  if (k){
+    for (size_t tid = threadIdx.x + blockIdx.x * blockDim.x; tid < N-k; tid += stride)
+      z[tid+k] = x[tid+k] + y[tid+k];
+  }
+  else
+  {
+    for (size_t tid = threadIdx.x + blockIdx.x * blockDim.x; tid < N; tid += stride)
+      z[tid] = x[tid] + y[tid];
+  }
 }
 
 /* Task 1 b) */
 __global__ void vectorAddStride(const double* x, const double* y, double* z, const size_t N, const size_t k) {
   const size_t stride = blockDim.x * gridDim.x;
 
-  if (k != 0){
+  if (k){
     for (size_t tid = threadIdx.x + blockIdx.x * blockDim.x; tid < N/k; tid += stride)
       z[tid*k] = x[tid*k] + y[tid*k];
   }
-  else
-  {
-      z[0] = x[0] + y[0];
+  else{
+    for (size_t tid = threadIdx.x + blockIdx.x * blockDim.x; tid < N; tid += stride)
+      z[tid] = x[tid] + y[tid];
+
   }
+
 }
 
 double median(std::vector<double>& vec)
@@ -92,7 +101,6 @@ int main(void)
   std::string sep = ";";
   std::cout << "k" << sep
             << "time" << sep
-            << "changed" << sep
             << "N" << sep
             << "Grid Size" << sep
             << "Block Size" << std::endl;

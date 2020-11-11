@@ -9,7 +9,6 @@
 #define BLOCK_SIZE 256
 #define GRID_SIZE 256
 
-
 /** Computes y = A*x for a sparse matrix A in CSR format and vector x,y  */
 __global__ void csr_Ax(const size_t N,
                         int *csr_rowoffsets, int *csr_colindices, double *csr_values,
@@ -27,7 +26,6 @@ __global__ void csr_Ax(const size_t N,
   }
 }
 
-// Naming is motivated by BLAS/LAPACK naming scheme...though bit simplified.
 __global__ void xADDay(const size_t N, double *x, double *y, double *z, const double alpha)
 {
   const size_t stride = blockDim.x * gridDim.x;
@@ -62,36 +60,7 @@ __global__ void xDOTy(const size_t N, double* x, double* y, double* z)
   {
     atomicAdd(z, cache[0]);
   }
-
-  // unsigned int index = threadIdx.x + blockDim.x*blockIdx.x;
-	// unsigned int stride = blockDim.x*gridDim.x;
-
-	// __shared__ double cache[256];
-
-	// double temp = 0.0;
-	// while(index < N){
-	// 	temp += x[index]*y[index];
-
-	// 	index += stride;
-	// }
-
-	// cache[threadIdx.x] = temp;
-
-	// __syncthreads();
-
-  //   for(int i = blockDim.x/2; i>0; i/=2) 
-  //   {
-  //       __syncthreads();
-  //       if(threadIdx.x < i)
-  //           cache[threadIdx.x] += cache[threadIdx.x + i];
-  //   }
-
-	// if(threadIdx.x == 0){
-	// 	atomicAdd(z, cache[0]);
-	// }
 }
-/** Computes y = A*x for a sparse matrix A in CSR format and vector x,y  
-
 
 /** Implementation of the conjugate gradient algorithm.
  *
@@ -110,15 +79,17 @@ void conjugate_gradient(const size_t N,  // number of unknows
 {
 
   // clear solution vector (it may contain garbage values):
-  std::fill(h_solution, h_solution + N, 0);
+  std::fill(h_solution, h_solution + N, 0.0);
 
   // initialize work vectors:
   double* h_pAp = (double*)malloc(sizeof(double));
   double* h_r2 = (double*)malloc(sizeof(double));
   double* h_r22 = (double*)malloc(sizeof(double));
-  // *h_pAp = 0.5;
-  // *h_r2 = 0.5;
-  // *h_r22 = 0.5;
+  double* zero = (double*)malloc(sizeof(double));
+  *zero = 0.00;
+  *h_pAp = 0.00;
+  *h_r2 = 0.00;
+  *h_r22 = 0.00;
   double* x; 
   double* p; 
   double* r; 
@@ -141,13 +112,16 @@ void conjugate_gradient(const size_t N,  // number of unknows
   //std::copy(h_rhs, h_rhs+N, h_r);
   cudaMemcpy(x, h_solution, arr_size, cudaMemcpyHostToDevice);
   cudaMemcpy(r, h_rhs, arr_size, cudaMemcpyHostToDevice);
+  cudaMemcpy(Ap, h_rhs, arr_size, cudaMemcpyHostToDevice);
   cudaMemcpy(p, h_rhs, arr_size, cudaMemcpyHostToDevice);
-    
 
   double alpha, beta;
   int iters = 0;
   //while (1) {
   while (iters < 10000) { // will end with iter == 10'000 or earlier
+    cudaMemcpy(r2, zero, sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(pAp, zero, sizeof(double), cudaMemcpyHostToDevice);
+    
     // 4: Ap = A * p
     csr_Ax<<<GRID_SIZE, BLOCK_SIZE>>>(N, csr_rowoffsets, csr_colindices, csr_values, p, Ap);
     // 5: pAp = <p,Ap>
@@ -168,22 +142,24 @@ void conjugate_gradient(const size_t N,  // number of unknows
     // 9: r2 = <r,r>
     xDOTy<<<GRID_SIZE, BLOCK_SIZE>>>(N, r, r, r2);
     cudaDeviceSynchronize();
-    cudaMemcpy(h_r2, r2, sizeof(double), cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_r22, r2, sizeof(double), cudaMemcpyDeviceToHost);
     cudaDeviceSynchronize();
     
-    // 10: check
-    if (iters < 10)
+    // // 10: check
+    if (iters < 10 or iters > 10000 - 10)
       std::cout << "r2[" << iters << "] = " << *h_r2 << " vs " << conv_factor << std::endl;
-    if (*h_r2 < conv_factor) {
+    if (*h_r22 < conv_factor) {
       break;
     }
 
     // beta = beta_i = ...
-    xDOTy<<<GRID_SIZE, BLOCK_SIZE>>>(N, r, r, r2);
-    cudaDeviceSynchronize();
-    cudaMemcpy(h_r22, r2, sizeof(double), cudaMemcpyDeviceToHost);
-    cudaDeviceSynchronize();
     beta = (*h_r22) / (*h_r2);
+    // 10: check
+    // if (iters < 10 or iters > 10000 - 10)
+    //   std::cout << "r2[" << iters << "] = " << beta << " vs " << conv_factor << std::endl;
+    // if (beta < conv_factor or beta > 10) {
+    //   break;
+    // }
     // 12: p = p_i+1 = ...
     xADDay<<<GRID_SIZE, BLOCK_SIZE>>>(N, r, p, p, beta);
     cudaDeviceSynchronize();
@@ -225,15 +201,15 @@ void solve_system(size_t points_per_direction) {
   // Note: Usually one does not know the number of nonzeros in the system matrix a-priori.
   //       For this exercise, however, we know that there are at most 5 nonzeros per row in the system matrix, so we can allocate accordingly.
   //
-  const size_t size_row = sizeof(double) * (N+1);
-  const size_t size_col = sizeof(double) * 5 * N;
+  const size_t size_row = sizeof(int) * (N+1);
+  const size_t size_col = sizeof(int) * 5 * N;
   const size_t size_val = sizeof(double) * 5 * N;
   int *h_csr_rowoffsets =    (int*)malloc(size_row);
   int *h_csr_colindices =    (int*)malloc(size_col);
   double *h_csr_values  = (double*)malloc(size_val);
 
-  double* csr_rowoffsets;
-  double* csr_colindices;
+  int* csr_rowoffsets;
+  int* csr_colindices;
   double* csr_values;
   cudaMalloc(&csr_rowoffsets, size_row);
   cudaMalloc(&csr_colindices, size_col);
@@ -261,8 +237,8 @@ void solve_system(size_t points_per_direction) {
   // rhs and solution are CPU arrays.
   // This isn't a nice setup obviously...but it's little more than a 1 file "script", so I think that's fine for now.
   //
-  double conv_factor = 1e-3; //1e-6
-  conjugate_gradient(N, h_csr_rowoffsets, h_csr_colindices, h_csr_values, rhs, solution, conv_factor);
+  double conv_factor = 1e-6; //1e-6
+  conjugate_gradient(N, csr_rowoffsets, csr_colindices, csr_values, rhs, solution, conv_factor);
 
   //
   // Check for convergence:
@@ -285,7 +261,7 @@ void solve_system(size_t points_per_direction) {
 
 int main() {
 
-  solve_system(100); // solves a system with 100*100 unknowns
+  solve_system(10); // solves a system with 100*100 unknowns
 
   return EXIT_SUCCESS;
 }
