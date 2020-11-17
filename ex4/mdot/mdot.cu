@@ -21,7 +21,7 @@ int main(void)
     std::vector<int> vec_ks;
     std::vector<int> vec_Ns;
 
-    for (size_t N = 1000; N <= 1000'000; N*=10) {
+    for (size_t N = 1000; N <= 1000000; N*=10) {
       //
       // Initialize CUBLAS:
       //
