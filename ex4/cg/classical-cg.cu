@@ -1,6 +1,8 @@
 #include "poisson2d.hpp"
 #include "timer.hpp"
 #include <algorithm>
+#include <string>
+#include <vector>
 #include <iostream>
 #include <stdio.h>
 
@@ -8,6 +10,8 @@
 // Seperate defines are really just for future convenience...
 #define BLOCK_SIZE 512
 #define GRID_SIZE 512
+#define SEP ";"
+//#define DEBUG
 
 // y = A * x
 __global__ void cuda_csr_matvec_product(int N, int *csr_rowoffsets,
@@ -69,7 +73,7 @@ __global__ void cuda_dot_product(int N, double *x, double *y, double *result)
  *  The temporary arrays p, r, and Ap need to be allocated on the GPU for use
  * with CUDA. Modify as you see fit.
  */
-void conjugate_gradient(int N, // number of unknows
+int conjugate_gradient(int N, // number of unknows
                         int *csr_rowoffsets, int *csr_colindices,
                         double *csr_values, double *rhs, double *solution)
 //, double *init_guess)   // feel free to add a nonzero initial guess as needed
@@ -145,6 +149,7 @@ void conjugate_gradient(int N, // number of unknows
   cudaMemcpy(solution, cuda_solution, sizeof(double) * N, cudaMemcpyDeviceToHost);
 
   cudaDeviceSynchronize();
+#ifdef DEBUG
   std::cout << "Time elapsed: " << timer.get() << " (" << timer.get() / iters << " per iteration)" << std::endl;
 
   if (iters > 10000)
@@ -153,23 +158,26 @@ void conjugate_gradient(int N, // number of unknows
   else
     std::cout << "Conjugate Gradient converged in " << iters << " iterations."
               << std::endl;
-
+#endif
   cudaFree(cuda_p);
   cudaFree(cuda_r);
   cudaFree(cuda_Ap);
   cudaFree(cuda_solution);
   cudaFree(cuda_scalar);
+
+  return iters;
 }
 
 /** Solve a system with `points_per_direction * points_per_direction` unknowns
  */
 void solve_system(int points_per_direction) {
 
+  Timer timer;
   int N = points_per_direction *
           points_per_direction; // number of unknows to solve for
-
+#ifdef DEBUG
   std::cout << "Solving Ax=b with " << N << " unknowns." << std::endl;
-
+#endif
   //
   // Allocate CSR arrays.
   //
@@ -210,15 +218,25 @@ void solve_system(int points_per_direction) {
   //
   // Call Conjugate Gradient implementation with GPU arrays
   //
-  conjugate_gradient(N, cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values, rhs, solution);
+  timer.reset();
+  int iters = conjugate_gradient(N, cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values, rhs, solution);
+  double runtime = timer.get();
 
   //
   // Check for convergence:
   //
   double residual_norm = relative_residual(N, csr_rowoffsets, csr_colindices, csr_values, rhs, solution);
+#ifdef DEBUG
   std::cout << "Relative residual norm: " << residual_norm
             << " (should be smaller than 1e-6)" << std::endl;
-
+#endif
+#ifndef DEBUG
+  std::cout << points_per_direction << SEP
+    << N << SEP
+    << runtime << SEP
+    << iters << SEP
+    << residual_norm << std::endl;
+#endif
   cudaFree(cuda_csr_rowoffsets);
   cudaFree(cuda_csr_colindices);
   cudaFree(cuda_csr_values);
@@ -231,7 +249,12 @@ void solve_system(int points_per_direction) {
 
 int main() {
 
-  solve_system(1000); // solves a system with 100*100 unknowns
+  std::vector<size_t> p_per_dir{ (size_t)sqrt(1e3), (size_t)sqrt(1e4), (size_t)sqrt(1e5), (size_t)sqrt(1e6), (size_t)sqrt(4e6)};
+#ifndef DEBUG
+  std::cout << "p" << SEP "N" << SEP << "time" << SEP << "iters" << SEP << "norm_after" << std::endl;
+#endif
+  for (auto& points: p_per_dir)
+    solve_system(points); // solves a system with 100*100 unknowns
 
   return EXIT_SUCCESS;
 }
