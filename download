@@ -1,0 +1,47 @@
+Peter Holzner, 01426733
+
+# Exercise 1
+
+About Yourself: 1/1 Point
+Expectations: 1/1 Point
+Summing Random Numbers in a Lecture Hall: 4/4 Points
+Bonus: Arbitrary Communication: 1 Point
+Bonus: Early Submission: 1 Point
+
+Total: 6 Points + 2 Bonus
+
+# Exercise 2
+
+Basic CUDA:
+ a) 1/1 Point
+ b) 1/1 Point.
+ c) 1/1 Point
+ d) 1/1 Point
+ e) 1/1 Point.
+ 
+Dot Product:
+  a) 2/2 Points.
+  b) 0/1 Point. Remark: The for-loop on the CPU is the culprit: "for ( int j = 0; j < blocks /2; j +=4) {...}" should be just "for ( int j = 0; j < blocks; ++j) result += h_block_sums[j];" (untested)
+  c) 1/1 Point
+Compare Performance: 1/1 Points
+
+Comment on your sidenote: 
+  #define BLOCK_SIZE xxxx
+is still one of the best ways to specify block sizes. The reason is that the compiler can then optimize the kernel for the particular thread block size. If the block size is a runtime parameter, this is not possible and a more general kernel (and hence often less efficient) will be generated.
+
+Total: 9/10 Points
+
+
+# Exercise 3
+
+Strided and Offset Memory Access: 2/2 Points
+Conjugate Gradients:
+ a) matvec-product: 0/1 Point
+ b) vector operations: 0/1 Point
+ c) Plot time and iterations: 0/1 Point.
+ d) Solution time breakdown: 0/1 Point.
+ e) Performance model: 0/1 Point.
+
+General remark: Time constraints are nasty - I hope you'll find more time for the upcoming exercises :-)
+
+Total: 2/7 Points

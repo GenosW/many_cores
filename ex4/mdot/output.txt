@@ -1,0 +1,44 @@
+Init CUBLAS...
+Allocating host arrays...
+Allocating CUDA arrays...
+Copying data to GPU...
+Running dot products with CUBLAS...
+Running dot products with custom xDOTy8...
+Running dot products with custom xDOTy8...
+------------------------------------------------------------
+Copying results back to host...
+654319 on CPU, 654319 on GPU. Relative difference: 7.65048e-15
+654421 on CPU, 654421 on GPU. Relative difference: 3.37992e-15
+654899 on CPU, 654899 on GPU. Relative difference: 8.71027e-15
+654978 on CPU, 654978 on GPU. Relative difference: 7.10957e-16
+654268 on CPU, 654268 on GPU. Relative difference: 8.89661e-16
+654472 on CPU, 654472 on GPU. Relative difference: 7.64869e-15
+654864 on CPU, 654864 on GPU. Relative difference: 2.31101e-15
+654322 on CPU, 654322 on GPU. Relative difference: 8.54004e-15
+------------------------------------------------------------
+Now to compare the custom kernel xDOTy to CPU...
+654319 on CPU, 654319 on GPU. Relative difference: 8.36216e-15
+654421 on CPU, 654421 on GPU. Relative difference: 2.84625e-15
+654899 on CPU, 654899 on GPU. Relative difference: 9.06579e-15
+654978 on CPU, 654978 on GPU. Relative difference: 8.88696e-16
+654268 on CPU, 654268 on GPU. Relative difference: 7.11729e-16
+654472 on CPU, 654472 on GPU. Relative difference: 8.3602e-15
+654864 on CPU, 654864 on GPU. Relative difference: 2.31101e-15
+654322 on CPU, 654322 on GPU. Relative difference: 8.00628e-15
+------------------------------------------------------------
+Now to compare the custom kernel xDOTy8 to CPU...
+654319 on CPU, 654319 on GPU. Relative difference: 8.54008e-15
+654421 on CPU, 654421 on GPU. Relative difference: 3.55781e-15
+654899 on CPU, 654899 on GPU. Relative difference: 7.82147e-15
+654978 on CPU, 654978 on GPU. Relative difference: 3.55478e-16
+654268 on CPU, 654268 on GPU. Relative difference: 8.89661e-16
+654472 on CPU, 654472 on GPU. Relative difference: 7.64869e-15
+654864 on CPU, 654864 on GPU. Relative difference: 2.66655e-15
+654322 on CPU, 654322 on GPU. Relative difference: 7.65045e-15
+------------------------------------------------------------
+And now compare the runtime of all implementations...
+CPU..........2.538e-06ms
+CUBLAS...6.31e-07ms >> Speedup: 4.02219
+xDOTy......4.46e-07ms >> Speedup: 5.69058
+xDOTy8....2.01e-07ms >> Speedup: 12.6269
+Cleaning up...
