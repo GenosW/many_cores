@@ -18,45 +18,6 @@
 #define MAX_POW 9
 #define NUM_TESTS 3
 
-/** median
-
-Calculates median of a vector.*/
-template <typename T>
-double median(std::vector<T>& vec)
-{
-  // modified taken from here: https://stackoverflow.com/questions/2114797/compute-median-of-values-stored-in-vector-c
-
-  size_t size = vec.size();
-
-  if (size == 0)
-    return 0.;
-
-  std::sort(vec.begin(), vec.end());
-
-  size_t mid = size/2;
-
-  return size % 2 == 0 ? (vec[mid] + vec[mid-1]) / 2 : vec[mid];
-}
-
-/** print_array
-
-*/
-template <typename T>
-void print_array(const int size, const T* array,const int only) {
-  if (only){
-    for (int i = 0; i < only; ++i) 
-        std::cout << array[i] << " | ";
-    std::cout << " ... ";
-    for (int i = size - only; i < size; ++i) 
-      std::cout << array[i] << " | ";
-  }
-  else {
-    for (int i = 0; i < size; ++i) 
-        std::cout << array[i] << " | ";
-  }
-  std::cout << std::endl;
-}
-
 /* ----------------------- FROM CG --------------------- */
 // y = A * x
 __global__ void cuda_csr_matvec_product(int N, int *csr_rowoffsets,
@@ -535,51 +496,54 @@ __global__ void calc_nz_entries (int* row_offsets, int N, int M) {
   }
 }
 
-__global__ void generate_values(double* values, int* columns, int* row_offsets, int N, int M) {
-  for(int row = blockDim.x * blockIdx.x + threadIdx.x; row < N*M; row += gridDim.x * blockDim.x) {
+/** generate_values
+
+Adaption of the assembly template given in lecture 5 */
+__global__ void generate_values(double* values, int* csr_cols, int* row_offsets, int N, int M) {
+  for (int row = blockDim.x * blockIdx.x + threadIdx.x; row < N*M; row += gridDim.x * blockDim.x) 
+  {
     int i = row / N;
     int j = row % N;
-    int counter = row_offsets[row];
-
-    int index = i*N + j;
-    values[counter] = 4;
-    columns[counter] = index;
-    counter++;
-
-    if ( i > 0) {
-        values[counter] = -1;
-        columns[counter] = (i-1)*N+j;
-        counter++;
+    int cnt = 0;
+    
+    if (i > 0) {
+        values[row_offsets[row] + cnt] = -1.;
+        csr_cols[row_offsets[row] + cnt] = (i-1)*N + j;
+        ++cnt;
     }
 
-    if ( j > 0) {
-      values[counter] = -1;
-      columns[counter] = i*N+(j-1);
-      counter++;
+    if (j > 0) {
+      values[row_offsets[row] + cnt] = -1.;
+      csr_cols[row_offsets[row] + cnt] = i*N + (j-1);
+      ++cnt;
     }
 
-    if ( i < N-1) {
-      values[counter] = -1;
-      columns[counter] = (i+1)*N+j;
-      counter++;
-    }
+    // diag always has value here
+    values[row_offsets[row] + cnt] = 4.;
+    csr_cols[row_offsets[row] + cnt] = i*N + j;
+    ++cnt;
 
-    if ( j < M-1) {
-        values[counter] = -1;
-        columns[counter] = i*N+(j+1);
-        counter++;
+    if (i < N-1) {
+        values[row_offsets[row] + cnt] = -1.;
+        csr_cols[row_offsets[row] + cnt] = (i+1)*N + j;
+        ++cnt;
+    }
+    
+    if (j < M-1) {
+        values[row_offsets[row] + cnt] = -1.;
+        csr_cols[row_offsets[row] + cnt] = i*N + (j+1);
+        ++cnt;
     }
   }
 }
 
 void assembleA_gpu(
-    const int N, const int M, int& nz_entries,
+    const int N, const int M, int& unknowns,
     int* row_offsets, int* columns, double* values) {
 
   int numberOfValues;
   int* row_offsets2;
   int size = (N*M+1);
-  // int size = (N+1);
   cudaMalloc(&row_offsets, sizeof(int) * (size));
   cudaMalloc(&row_offsets2, sizeof(int) * (size));
 
@@ -594,46 +558,54 @@ void assembleA_gpu(
   int *check2 = (int*)malloc(sizeof(int) * size);
   cudaMemcpy(check, row_offsets, sizeof(int)* (size), cudaMemcpyDeviceToHost);
   cudaMemcpy(check2, row_offsets2, sizeof(int)* (size), cudaMemcpyDeviceToHost);
-  std::cout << "rowoffsets" << std::endl;
-  print_array(size, check, 3);
-  std::cout << "rowoffsets individual" << std::endl;
-  print_array(size, check2, 3);
+  for (int i = 0; i < size; ++i) 
+      std::cout << check[i] << " | ";
+  std::cout << std::endl;
+  for (int i = 0; i < size; ++i) 
+      std::cout << check2[i] << " | ";
+  std::cout << std::endl;
 
 #endif
   // Now we can malloc values and cols
   cudaMemcpy(&numberOfValues, row_offsets+(size-1), sizeof(int), cudaMemcpyDeviceToHost);
+  numberOfValues += 2;
 #ifdef DEBUG
-  if (nz_entries != numberOfValues) {
-    std::cout << "Something wrong with nz_entries! : " << nz_entries << " vs " << numberOfValues << std::endl;
-    nz_entries = numberOfValues;
-    std::cout << "Replaced nz_entries with: " << nz_entries << std::endl;
+  if (unknowns != numberOfValues) {
+    std::cout << "Something wrong with unknowns! : " << unknowns << " vs " << numberOfValues << std::endl;
+    unknowns = numberOfValues;
+    std::cout << "Replaced unknowns with: " << unknowns << std::endl;
   }
 #endif
   cudaFree(row_offsets2); // memory efficiency!
   cudaMalloc(&columns, sizeof(int) * numberOfValues);
   cudaMalloc(&values, sizeof(double) * numberOfValues);
-  
-#ifdef DEBUG
-  double* check3 = (double*)malloc(sizeof(double) * numberOfValues); 
-  std::fill(check3, check3+numberOfValues, 0.);
-  cudaMemcpy(values, check3, sizeof(double)* (numberOfValues), cudaMemcpyHostToDevice);
-#endif
+
   // populate values and columns
   generate_values<<<GRID_SIZE, BLOCK_SIZE>>>(values, columns, row_offsets, N, M);
-
-#ifdef DEBUG
-  cudaMemcpy(check, columns, sizeof(int)* (numberOfValues), cudaMemcpyDeviceToHost);
-  cudaMemcpy(check3, values, sizeof(double)* (numberOfValues), cudaMemcpyDeviceToHost);
-  std::cout << "cols" << std::endl;
-  print_array(size, check, 3);
-  std::cout << "values" << std::endl;
-  print_array(numberOfValues, check3, 0);
-
+#ifdef DEBUG 
   std::cout << "Done with assembly on GPU!" << std::endl;
-  free(check);
-  free(check2);
-  free(check3);
 #endif
+}
+
+
+/** median
+
+Calculates median of a vector.*/
+template <typename T>
+double median(std::vector<T>& vec)
+{
+  // modified taken from here: https://stackoverflow.com/questions/2114797/compute-median-of-values-stored-in-vector-c
+
+  size_t size = vec.size();
+
+  if (size == 0)
+    return 0.;
+
+  std::sort(vec.begin(), vec.end());
+
+  size_t mid = size/2;
+
+  return size % 2 == 0 ? (vec[mid] + vec[mid-1]) / 2 : vec[mid];
 }
 
 
@@ -647,9 +619,8 @@ EDIT: Properly allocate index arrows as int now.
  void solve_system(int N, int M) {
 
   Timer timer;
-  const int size = N*M; // * N*M;
-  int estimate = 5*N;// number of unknows to solve for --> to check
-  int nz_found = 5 * (N-2) *(M-2) + 8*(N+M-4)+12;
+  const int size = N*M * N*M; 
+  int unknowns = N*M*3 - 2;// number of unknows to solve for --> to check
 #ifdef DEBUG
   std::cout << "Solving Ax=b with NxM= " << N << "x" << N << std::endl;
 #endif
@@ -664,19 +635,17 @@ EDIT: Properly allocate index arrows as int now.
 
 
   // This may be a bad coding sytle - declaring pointers here and allocating in the function assembleA_gpu below - but it's convenient here.
-  int* cuda_csr_rowoffsets, * cuda_csr_colindices;
-  double* cuda_csr_values;
+  int *cuda_csr_rowoffsets, *cuda_csr_colindices;
+  double *cuda_csr_values;
 
   timer.reset();
-  assembleA_gpu(size, size, nz_found, cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values); 
-  // assembleA_gpu(N, M, nz_found, cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values); 
+  assembleA_gpu(N, M, unknowns, cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values); 
   double time_assemble_gpu = timer.get();
 
 #ifdef DEBUG
-  std::cout << "Unknowns: " << nz_found << std::endl;
+  std::cout << "Unknowns: " << unknowns << std::endl;
 #endif
   
-  estimate = nz_found;
   //
   // fill CSR matrix with values
   //
@@ -687,33 +656,27 @@ EDIT: Properly allocate index arrows as int now.
   int* cuda_coltemps;
   double* cuda_valtemps;
   cudaMalloc(&cuda_rowtemps, sizeof(int) * (size + 1));
-  cudaMalloc(&cuda_coltemps, sizeof(int) * estimate);
-  cudaMalloc(&cuda_valtemps, sizeof(double) * estimate);
+  cudaMalloc(&cuda_coltemps, sizeof(int) * unknowns);
+  cudaMalloc(&cuda_valtemps, sizeof(double) * unknowns);
 
   int *csr_rowoffsets = (int *)malloc(sizeof(int) * (size + 1));
-  int *csr_colindices = (int *)malloc(sizeof(int) * estimate);
-  double *csr_values = (double *)malloc(sizeof(double) * estimate);
+  int *csr_colindices = (int *)malloc(sizeof(int) * unknowns);
+  double *csr_values = (double *)malloc(sizeof(double) * unknowns);
 
 #ifdef DEBUG
   std::cout << "generate CPU "<<std::endl;
 #endif
   timer.reset();
-  cudaMemcpy(csr_rowoffsets, cuda_csr_rowoffsets, sizeof(int) * (size + 1), cudaMemcpyDeviceToHost);
-  generate_fdm_laplace(size, csr_rowoffsets, csr_colindices, csr_values);
-  // generate_values_cpu(csr_values, csr_colindices, csr_rowoffsets, N, M);
-#ifdef DEBUG
-  std::cout << "Copy from CPU to GPU "<<std::endl;
-#endif
+  generate_fdm_laplace(unknowns, csr_rowoffsets, csr_colindices,
+                      csr_values);
   cudaMemcpy(cuda_rowtemps, csr_rowoffsets, sizeof(int) * (size + 1), cudaMemcpyHostToDevice);
-  cudaMemcpy(cuda_coltemps, csr_colindices, sizeof(int) * estimate,   cudaMemcpyHostToDevice);
-  cudaMemcpy(cuda_valtemps, csr_values, sizeof(double) * estimate,   cudaMemcpyHostToDevice);
+  cudaMemcpy(cuda_coltemps, csr_colindices, sizeof(int) * unknowns,   cudaMemcpyHostToDevice);
+  cudaMemcpy(cuda_valtemps, csr_values, sizeof(double) * unknowns,   cudaMemcpyHostToDevice);
   double time_assemble_cpu = timer.get();
 
-  //print_array(estimate, csr_values, 0);
-
-  // cudaFree(cuda_rowtemps);
-  // cudaFree(cuda_coltemps);
-  // cudaFree(cuda_valtemps);
+  cudaFree(cuda_rowtemps);
+  cudaFree(cuda_coltemps);
+  cudaFree(cuda_valtemps);
   #ifdef DEBUG
   std::cout << "fill solution "<<std::endl;
 #endif
@@ -723,7 +686,7 @@ EDIT: Properly allocate index arrows as int now.
   //
   double *solution = (double *)malloc(sizeof(double) * size);
   double *rhs = (double *)malloc(sizeof(double) * size);
-  std::fill(rhs, rhs + size, 1);
+  std::fill(rhs, rhs + unknowns, 1);
 
   
   //
@@ -733,8 +696,7 @@ EDIT: Properly allocate index arrows as int now.
   std::cout << "CG "<<std::endl;
 #endif
   timer.reset();
-  // int iters = conjugate_gradient(size, cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values, rhs, solution);
-  // int iters = conjugate_gradient(size, cuda_rowtemps, cuda_coltemps, cuda_valtemps, rhs, solution);
+  int iters = conjugate_gradient(size, cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values, rhs, solution);
   double runtime = timer.get();
 
     //
@@ -743,11 +705,7 @@ EDIT: Properly allocate index arrows as int now.
 #ifdef DEBUG
   std::cout << "check convergence "<<std::endl;
 #endif
-  cudaMemcpy(csr_rowoffsets, cuda_csr_rowoffsets, sizeof(double) * 
-  (size + 1),   cudaMemcpyHostToDevice);
-  cudaMemcpy(csr_colindices, cuda_csr_colindices, sizeof(double) * estimate,   cudaMemcpyHostToDevice);
-  cudaMemcpy(csr_values, cuda_csr_values, sizeof(double) * estimate,   cudaMemcpyHostToDevice);
-  double residual_norm = relative_residual(N, csr_rowoffsets, csr_colindices, csr_values, rhs, solution);
+  double residual_norm = relative_residual(size, csr_rowoffsets, csr_colindices, csr_values, rhs, solution);
 
 #ifdef DEBUG
   std::cout << "Time elapsed: " << runtime << " (" << runtime / iters << " per iteration)" << std::endl;
@@ -759,8 +717,7 @@ EDIT: Properly allocate index arrows as int now.
   std::string csv_name = CSV_NAME;
   csv.open (csv_name, std::fstream::out | std::fstream::app);
   csv << N << SEP << M << SEP
-    << size*size << SEP
-    << nz_found << SEP
+    << unknowns << SEP
     << time_assemble_cpu << SEP
     << time_assemble_gpu << SEP
     << runtime << SEP
@@ -771,9 +728,6 @@ EDIT: Properly allocate index arrows as int now.
   cudaFree(cuda_csr_rowoffsets);
   cudaFree(cuda_csr_colindices);
   cudaFree(cuda_csr_values);
-  cudaFree(cuda_rowtemps);
-  cudaFree(cuda_coltemps);
-  cudaFree(cuda_valtemps);
   free(solution);
   free(rhs);
   free(csr_rowoffsets);
@@ -785,11 +739,11 @@ int main()
 {
   std::string csv_name = CSV_NAME;
   std::cout << "\n\nResults in csv form can be found here\nhttps://gtx1080.360252.org/2020/ex5/" + csv_name << std::endl;
-  std::vector<size_t> p_per_dir{(size_t)3}; //{ (size_t)sqrt(1e3), (size_t)sqrt(1e4), (size_t)sqrt(1e5), (size_t)sqrt(1e6), (size_t)sqrt(4e6)};
+  std::vector<size_t> p_per_dir{(size_t)5}; //{ (size_t)sqrt(1e3), (size_t)sqrt(1e4), (size_t)sqrt(1e5), (size_t)sqrt(1e6), (size_t)sqrt(4e6)};
 
-  std::string header = "N;M;unknowns;nz_found;times_assemble_cpu;times_assemble_gpu;times_cg;iters;norm_after";
+  std::string header = "N;M;unknowns;times_assemble_cpu;times_assemble_gpu;times_cg;iters;norm_after";
   std::fstream csv;
-  csv.open (csv_name, std::fstream::out | std::fstream::trunc);
+  csv.open (csv_name, std::fstream::out | std::fstream::app);
   csv << header << std::endl;
   csv.close();
 
