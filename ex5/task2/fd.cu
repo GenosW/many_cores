@@ -29,7 +29,7 @@ void printContainer(T container, const int size, const int only) {
         std::cout << container[i] << " | ";
   }
   std::cout << std::endl;
- }
+}
  
 // y = A * x
 __global__ void cuda_csr_matvec_product(int N, int *csr_rowoffsets,

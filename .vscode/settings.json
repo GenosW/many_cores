@@ -1,4 +1,7 @@
 {
     "python.pythonPath": "/usr/local/bin/python3",
-    "jupyter.jupyterServerType": "local"
+    "jupyter.jupyterServerType": "local",
+    "clangd.arguments": [
+        "nocudalib"
+    ]
 }
