@@ -9,8 +9,8 @@
 #include <string>
 #include <vector>
 
-#define BLOCK_SIZE 256
-#define GRID_SIZE 256
+#define BLOCK_SIZE 128
+#define GRID_SIZE 128
 #define SEP ";"
 #define CSV_NAME "data_ph.csv"
 
@@ -46,6 +46,11 @@ void printResults(double* results, std::vector<std::string> names, int size){
 }
 
 /** atomicMax for double
+ * 
+ * References:
+ * (1) https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomicmax
+ * (2) https://www.micc.unifi.it/bertini/download/gpu-programming-basics/2017/gpu_cuda_5.pdf
+ * (3) https://stackoverflow.com/questions/17399119/cant-we-use-atomic-operations-for-floating-point-variables-in-cuda
  */
 __device__ void atomicMax(double* address, double val){    
   if (val > *address) {
@@ -57,7 +62,7 @@ __device__ void atomicMax(double* address, double val){
       // atomicCAS returns the value that is stored in address AFTER the CAS
       // atomicCAS(a, b, c) --> return c
       //
-    } while (assumed != old && old > __double_as_longlong(val));
+    } while (assumed != old || __double_as_longlong(val) > old);
   }
 }
 
@@ -71,9 +76,9 @@ __device__ void atomicMin(double* address, double val){
       assumed = old;
       old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val));
       // atomicCAS returns the value that is stored in address AFTER the CAS
-      // atomicCAS(a, b, c) --> return c
-      //
-    } while (assumed != old && old < __double_as_longlong(val));
+      // atomicCAS(a, b, c) --> return a
+      // atomicCAS(a, a, c) --> return c
+    } while (assumed != old || __double_as_longlong(val) < old);
   }
 }
 
@@ -131,10 +136,10 @@ __global__ void analyze_x_shared(const int N, double *x, double *results) {
   for (; tid < N; tid += stride) {
     double value = x[tid];
     sum += value;
-    abs_sum += abs(value);
+    abs_sum += std::abs(value);
     sqr_sum += value*value;
 
-    // mod_max = (abs(value) > mod_max)? value : mod_max;
+    // mod_max = (std::abs(value) > mod_max)? value : mod_max;
     min = (value < min)? value : min; 
     max = (value > max)? value : max;
     z_entries += (value)? 0 : 1;
@@ -143,7 +148,7 @@ __global__ void analyze_x_shared(const int N, double *x, double *results) {
   cache[0][tid] = sum;
   cache[1][tid] = abs_sum;
   cache[2][tid] = sqr_sum;
-  cache[3][tid] = (abs(min) > max) ? abs(min) : max;
+  cache[3][tid] = (std::abs(min) > std::abs(max)) ? std::abs(min) : std::abs(max);
   cache[4][tid] = min;
   cache[5][tid] = max;
   cache[6][tid] = z_entries;
@@ -157,9 +162,9 @@ __global__ void analyze_x_shared(const int N, double *x, double *results) {
       cache[1][tid] += cache[1][tid + i]; 
       cache[2][tid] += cache[2][tid + i]; 
       // min/max values
-      cache[3][tid] = (cache[3][tid + i] > cache[3][tid])? cache[3][tid + i] : cache[3][tid]; // already all values are abs(...)
+      cache[3][tid] = (cache[3][tid + i] > cache[3][tid])? cache[3][tid + i] : cache[3][tid]; // already all values are std::abs(...)
       cache[4][tid] = (cache[4][tid + i] < cache[4][tid])? cache[4][tid + i] : cache[4][tid]; 
-      cache[5][tid] = (cache[5][tid + i] > cache[5][tid])? cache[5][tid + i] : cache[5][tid] ; 
+      cache[5][tid] = (cache[5][tid + i] > cache[5][tid])? cache[5][tid + i] : cache[5][tid]; 
 
       // "sum"
       cache[6][tid] += cache[6][tid + i]; 
@@ -215,7 +220,7 @@ int main(void) {
   // std::vector<double> times_cublas;
   // std::vector<double> times_analyze_x_shared;
   // std::vector<int> vec_Ks;
-  std::vector<int> vec_Ns{9, 21};
+  std::vector<int> vec_Ns{7, 13, 23};
 
 #ifdef CSV
   std::fstream csv;
@@ -246,10 +251,10 @@ int main(void) {
     std::generate_n(x, N, [n = -N/2] () mutable { return n++; });
     std::random_shuffle(x, x+N);
     // I'm placing some values here by hand, so that certain results can be forced
-    // --> mod_max, min, max...
+    // --> to test: mod_max, min, max...
     x[0] = -1.1;
     x[N/5] = 0.;
-    x[N/3] = -(N+1);
+    x[N/3] = -(N-1);
     x[2*N/3] = N;
 
     std::fill(results, results+7, 0.0);
