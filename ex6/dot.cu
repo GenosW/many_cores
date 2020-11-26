@@ -1,5 +1,6 @@
 #include "timer.hpp"
 #include <algorithm>
+#include <numeric>
 #include <cmath>
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
@@ -9,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#define BLOCK_SIZE 128
+#define BLOCK_SIZE 256
 #define GRID_SIZE 128
 #define SEP ";"
 #define CSV_NAME "data_ph.csv"
@@ -42,6 +43,13 @@ void printResults(double* results, std::vector<std::string> names, int size){
   std::cout << "Results:" << std::endl;
   for (int i = 0; i < size; ++i) {
     std::cout << names[i] << " : " << results[i] << std::endl;
+  }
+}
+
+void printResults(double* results, double* ref, std::vector<std::string> names, int size){
+  std::cout << "Results (with difference to reference):" << std::endl;
+  for (int i = 0; i < size; ++i) {
+    std::cout << names[i] << " = " << results[i] << " ||  " << ref[i] - results[i] << std::endl;
   }
 }
 
@@ -82,6 +90,50 @@ __device__ void atomicMin(double* address, double val){
   }
 }
 
+// /** atomicMax for double
+//  * 
+//  * References:
+//  * (1) https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomicmax
+//  * (2) https://www.micc.unifi.it/bertini/download/gpu-programming-basics/2017/gpu_cuda_5.pdf
+//  * (3) https://stackoverflow.com/questions/17399119/cant-we-use-atomic-operations-for-floating-point-variables-in-cuda
+//  */
+//  __device__ void atomicMax(double* address, double val){    
+//   if (val > *address) {
+//     unsigned long long int* address_as_ull = (unsigned long long int*) address; 
+//     unsigned long long int old = *address_as_ull, assumed;
+//     do  {
+//       assumed = old;
+//       old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val));
+//       // atomicCAS returns the value that is stored in address AFTER the CAS
+//       // atomicCAS(a, b, c) --> return c
+//       //
+//     } while (assumed != old || __double_as_longlong(val) > old);
+//   }
+
+//   if (tid==0) {
+//     do {} while(atomicCAS(&lock,0,1)); // set lock
+//     *d_sum += temp[0];
+//     __threadfence();  // wait for write completion
+//     lock = 0;                         // free lock
+//   }
+// }
+
+// /** atomicMin for double
+//  */
+// __device__ void atomicMin(double* address, double val){    
+//   if (val < *address) {
+//     unsigned long long int* address_as_ull = (unsigned long long int*) address; 
+//     unsigned long long int old = *address_as_ull, assumed;
+//     do  {
+//       assumed = old;
+//       old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val));
+//       // atomicCAS returns the value that is stored in address AFTER the CAS
+//       // atomicCAS(a, b, c) --> return a
+//       // atomicCAS(a, a, c) --> return c
+//     } while (assumed != old || __double_as_longlong(val) < old);
+//   }
+// }
+
 /** scalar = x DOT y
  */
 __global__ void xDOTy(const int N, double *x, double *y, double *scalar) {
@@ -121,18 +173,18 @@ __global__ void xDOTy(const int N, double *x, double *y, double *scalar) {
  * result[5] = max;
  * result[6] = z_entries;
  */
-template <int block_size=BLOCK_SIZE>
+// template <int block_size=BLOCK_SIZE>
 __global__ void analyze_x_shared(const int N, double *x, double *results) {
   int tid = threadIdx.x + blockDim.x * blockIdx.x; // global tid
   const int stride = blockDim.x * gridDim.x;
 
-  __shared__ double cache[7][block_size];
+  __shared__ double cache[7][BLOCK_SIZE];
 
   double sum = 0.0, abs_sum = 0.0, sqr_sum = 0.0;
   // double mod_max = 0.0;
-  double max = x[tid];
+  double max = x[0];
   double min = max;
-  int z_entries = 0;
+  double z_entries = 0;
   for (; tid < N; tid += stride) {
     double value = x[tid];
     sum += value;
@@ -196,14 +248,13 @@ __global__ void analyze_x_shared(const int N, double *x, double *results) {
  * result[5] = max;
  * result[6] = z_entries;
  */
- template <int block_size=BLOCK_SIZE>
- __global__ void analyze_x_warp(const int N, double *x, double *results) {
+__global__ void analyze_x_warp(const int N, double *x, double *results) {
   int tid = threadIdx.x + blockDim.x * blockIdx.x; // global tid
   const int stride = blockDim.x * gridDim.x;
 
   double sum = 0.0, abs_sum = 0.0, sqr_sum = 0.0;
   // double mod_max = 0.0;
-  double max = x[tid];
+  double max = x[0];
   double min = max;
   int z_entries = 0;
   for (; tid < N; tid += stride) {
@@ -221,38 +272,44 @@ __global__ void analyze_x_shared(const int N, double *x, double *results) {
   double mod_max = (std::abs(min) > std::abs(max)) ? std::abs(min) : std::abs(max);
 
   __syncthreads();
-  // for (int i = blockDim.x / 2; i != 0; i /= 2) {
-  //   //__syncthreads();
-  //   sum += __shfl_down_sync(-1, sum, i);
-  //   abs_sum += __shfl_down_sync(-1, abs_sum, i);
-  //   sqr_sum += __shfl_down_sync(-1, sqr_sum, i);
-
-  //   double tmp = __shfl_down_sync(-1, mod_max, i);
-  //   mod_max = (tmp > mod_max) ? tmp : mod_max;
-  //   tmp = __shfl_down_sync(-1, min, i);
-  //   min = (tmp < min) ? tmp : min;
-  //   tmp = __shfl_down_sync(-1, max, i);
-  //   max = (tmp > max) ? tmp : max;
-
-  //   z_entries += __shfl_down_sync(-1, z_entries, i);
-  // }
-  for (int i = blockDim.x / 2; i != 0; i /= 2) {
+  for (int i = warpSize / 2; i != 0; i /= 2) {
     //__syncthreads();
-    sum += __shfl_xor_sync(-1, sum, i);
-    abs_sum += __shfl_xor_sync(-1, abs_sum, i);
-    sqr_sum += __shfl_xor_sync(-1, sqr_sum, i);
+    sum += __shfl_down_sync(0xffffffff, sum, i);
+    abs_sum += __shfl_down_sync(0xffffffff, abs_sum, i);
+    sqr_sum += __shfl_down_sync(0xffffffff, sqr_sum, i);
 
-    double tmp = __shfl_xor_sync(-1, mod_max, i);
+    double tmp = __shfl_down_sync(0xffffffff, mod_max, i);
     mod_max = (tmp > mod_max) ? tmp : mod_max;
-    tmp = __shfl_xor_sync(-1, min, i);
+    tmp = __shfl_down_sync(0xffffffff, min, i);
     min = (tmp < min) ? tmp : min;
-    tmp = __shfl_xor_sync(-1, max, i);
+    tmp = __shfl_down_sync(0xffffffff, max, i);
     max = (tmp > max) ? tmp : max;
 
-    z_entries += __shfl_xor_sync(-1, z_entries, i);
+    z_entries += __shfl_down_sync(0xffffffff, z_entries, i);
   }
+  // for (int i = blockDim.x / 2; i != 0; i /= 2) {
+  // for (int i = warpSize / 2; i != 0; i /= 2) {
+  //   //__syncthreads();
+  //   sum += __shfl_xor_sync(-1, sum, i);
+  //   abs_sum += __shfl_xor_sync(-1, abs_sum, i);
+  //   sqr_sum += __shfl_xor_sync(-1, sqr_sum, i);
 
-  if (tid == 0) 
+  //   double tmp = __shfl_xor_sync(-1, mod_max, i);
+  //   mod_max = (tmp > mod_max) ? tmp : mod_max;
+  //   tmp = __shfl_xor_sync(-1, min, i);
+  //   min = (tmp < min) ? tmp : min;
+  //   tmp = __shfl_xor_sync(-1, max, i);
+  //   max = (tmp > max) ? tmp : max;
+
+  //   z_entries += __shfl_xor_sync(-1, z_entries, i);
+  // }
+
+  // sum /= blockDim.x / warpSize;
+  // abs_sum /= blockDim.x / warpSize;
+  // sqr_sum /= blockDim.x / warpSize;
+  // z_entries /= blockDim.x / warpSize;
+
+  if (tid%warpSize == 0) 
   {
     atomicAdd(results, sum);
     atomicAdd(results+1, abs_sum);
@@ -264,18 +321,6 @@ __global__ void analyze_x_shared(const int N, double *x, double *results) {
 
     atomicAdd(results+6, z_entries);
   }
-  // if (tid == 0) 
-  // {
-  //   atomicCAS(results, *results, sum);
-  //   atomicCAS(results+1, *results+1, abs_sum);
-  //   atomicCAS(results+2, *results+2, sqr_sum);
-
-  //   atomicCAS(results+3, *results+3, mod_max);
-  //   atomicCAS(results+4, *results+4, min);
-  //   atomicCAS(results+5, *results+5, max);
-
-  //   atomicCAS(results+6, *results+6, z_entries);
-  // }
  }
 
 int main(void) {
@@ -285,7 +330,7 @@ int main(void) {
   // std::vector<double> times_cublas;
   // std::vector<double> times_analyze_x_shared;
   // std::vector<int> vec_Ks;
-  std::vector<int> vec_Ns{7, 13, 23};
+  std::vector<int> vec_Ns{25, 100, 1000, 10000};
 
 #ifdef CSV
   std::fstream csv;
@@ -312,6 +357,7 @@ int main(void) {
     double *x = (double *)malloc(sizeof(double) * N);
     double *results = (double *)malloc(sizeof(double) * 7);
     double *results2 = (double *)malloc(sizeof(double) * 7);
+    double *results_ref = (double *)malloc(sizeof(double) * 7);
     std::vector<std::string> names {"sum", "abs_sum", "sqr_sum", "mod_max", "min", "max", "zero_entries"};
 
     std::generate_n(x, N, [n = -N/2] () mutable { return n++; });
@@ -328,6 +374,20 @@ int main(void) {
     results[4] = x[0];
     results[5] = x[0];
     std::copy(results, results+7, results2);
+    std::copy(results, results+7, results_ref);
+    timer.reset();
+    // results_ref[0] = std::accumulate(x, x+N, 0.0);
+    for (int i = 0; i < N; ++i){
+      double tmp = x[i];
+      results_ref[0] += tmp;
+      results_ref[1] += std::abs(tmp);
+      results_ref[2] += tmp*tmp;
+      results_ref[4] = (tmp < results_ref[4]) ? tmp : results_ref[4];
+      results_ref[5] = (tmp > results_ref[5]) ? tmp : results_ref[5];
+      results_ref[6] += tmp ? 0 : 1;
+    }
+    results_ref[3] = (std::abs(results_ref[4]) > std::abs(results_ref[5])) ? std::abs(results_ref[4]) : std::abs(results_ref[5]);
+    double time_cpuref = timer.get();
     /*result[0] = sum;
     * result[1] = abs_sum;
     * result[2] = sqr_sum;
@@ -388,7 +448,7 @@ int main(void) {
 #endif
     cudaMemcpy(cuda_results2, results2, sizeof(double) * 7, cudaMemcpyHostToDevice);
     timer.reset();
-    analyze_x_warp<<<GRID_SIZE, BLOCK_SIZE>>>(N, cuda_x, cuda_results2);
+    analyze_x_warp<<<max(1,(int)N/BLOCK_SIZE), BLOCK_SIZE>>>(N, cuda_x, cuda_results2);
     cudaMemcpy(results2, cuda_results2, sizeof(double) * 7, cudaMemcpyDeviceToHost);
     double time_warp = timer.get();
 
@@ -396,16 +456,21 @@ int main(void) {
     // Compare results
     //
 #ifdef DEBUG
-      std::cout << "DEBUG output:" << std::endl;
-      std::cout << "x:" << std::endl;
-      printContainer(x, N);
-      std::cout << ">SHARED<" << std::endl;
-      printResults(results, names, names.size());
-      std::cout << "GPU shared runtime: " << time_shared << std::endl;
+    std::cout << "DEBUG output:" << std::endl;
+    std::cout << "x:" << std::endl;
+    int only = 4;
+    printContainer(x, N, only);
 
-      std::cout << ">WARP<" << std::endl;
-      printResults(results2, names, names.size());
-      std::cout << "GPU warp runtime: " << time_warp << std::endl;
+    std::cout << ">SHARED<" << std::endl;
+    printResults(results, results_ref, names, names.size());
+
+    std::cout << ">WARP<" << std::endl;
+    printResults(results2, results_ref, names, names.size());
+
+    std::cout << "GPU shared runtime: " << time_shared << std::endl;
+    std::cout << "GPU warp runtime: " << time_warp << std::endl;
+    std::cout << "CPU ref runtime: " << time_cpuref << std::endl;
+    
 #endif
 
     //
@@ -418,6 +483,7 @@ int main(void) {
     free(x);
     free(results);
     free(results2);
+    free(results_ref);
 
     cudaFree(cuda_x);
     cudaFree(cuda_results);
