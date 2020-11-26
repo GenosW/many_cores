@@ -47,26 +47,6 @@ void printResults(double* results, std::vector<std::string> names, int size){
 
 /** atomicMax for double
  */
-// __device__ void atomicMax(double* address, double val){    
-
-//   unsigned long long int* address_as_ull = (unsigned long long int*) address; 
-//   unsigned long long int old = *address_as_ull, assumed;
-//   unsigned long long int val_as_ull = val;
-
-//   while (val_as_ull > old) {
-//     old = atomicMax(address_as_ull, __double_as_longlong(val));
-//   }
-// }
-// unsigned long long int* address_as_ull = (unsigned long long int*) address;
-// unsigned long long int old = *address_as_ull;
-// unsigned long long int assumed;
-// do {
-//   assumed = old;
-//   old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val + __longlong_as_double(assumed)));
-//       // Note: uses integer comparison to avoid hang in case
-//       // of NaN (since NaN != NaN)
-//     } while (assumed != old);
-
 __device__ void atomicMax(double* address, double val){    
   if (val > *address) {
     unsigned long long int* address_as_ull = (unsigned long long int*) address; 
@@ -81,6 +61,8 @@ __device__ void atomicMax(double* address, double val){
   }
 }
 
+/** atomicMin for double
+ */
 __device__ void atomicMin(double* address, double val){    
   if (val < *address) {
     unsigned long long int* address_as_ull = (unsigned long long int*) address; 
@@ -94,16 +76,6 @@ __device__ void atomicMin(double* address, double val){
     } while (assumed != old && old < __double_as_longlong(val));
   }
 }
-
-// __device__ void atomicMin(double* address, double val){    
-//   unsigned long long int* address_as_ull = (unsigned long long int*) address; 
-//   unsigned long long int old = *address_as_ull, assumed;
-//   unsigned long long int val_as_ull = val;
-
-//   while (val_as_ull < old) {
-//     old = atomicMin(address_as_ull, __double_as_longlong(val));
-//   }
-// }
 
 /** scalar = x DOT y
  */
