@@ -186,32 +186,97 @@ __global__ void analyze_x_shared(const int N, double *x, double *results) {
   }
 }
 
-// __global__ void xDOTy(const int N, double *x, double *y, double *z) {
-//   int tid = threadIdx.x + blockDim.x * blockIdx.x;
-//   const int stride = blockDim.x * gridDim.x;
+/** analyze_x_shared
+ * 
+ * result[0] = sum;
+ * result[1] = abs_sum;
+ * result[2] = sqr_sum;
+ * result[3] = mod_max;
+ * result[4] = min;
+ * result[5] = max;
+ * result[6] = z_entries;
+ */
+ template <int block_size=BLOCK_SIZE>
+ __global__ void analyze_x_warp(const int N, double *x, double *results) {
+  int tid = threadIdx.x + blockDim.x * blockIdx.x; // global tid
+  const int stride = blockDim.x * gridDim.x;
 
-//   __shared__ double cache[BLOCK_SIZE];
+  double sum = 0.0, abs_sum = 0.0, sqr_sum = 0.0;
+  // double mod_max = 0.0;
+  double max = x[tid];
+  double min = max;
+  int z_entries = 0;
+  for (; tid < N; tid += stride) {
+    double value = x[tid];
+    sum += value;
+    abs_sum += std::abs(value);
+    sqr_sum += value*value;
 
-//   double tid_sum = 0.0;
-//   for (; tid < N; tid += stride) {
-//     double tmp_x = x[tid];
-//     tid_sum += tmp_x * y[tid];
-//   }
-//   tid = threadIdx.x;
-//   cache[tid] = tid_sum;
+    // mod_max = (std::abs(value) > mod_max)? value : mod_max;
+    min = (value < min)? value : min; 
+    max = (value > max)? value : max;
+    z_entries += (value)? 0 : 1;
+  }
+  tid = threadIdx.x; // block tid 
+  double mod_max = (std::abs(min) > std::abs(max)) ? std::abs(min) : std::abs(max);
 
-//   __syncthreads();
-//   for (int i = blockDim.x / 2; i != 0; i /= 2) {
-//     __syncthreads();
-//     if (tid < i)                    // lower half does smth, rest idles
-//       cache[tid] += cache[tid + i]; // lower looks up by stride and sums up
-//   }
+  __syncthreads();
+  // for (int i = blockDim.x / 2; i != 0; i /= 2) {
+  //   //__syncthreads();
+  //   sum += __shfl_down_sync(-1, sum, i);
+  //   abs_sum += __shfl_down_sync(-1, abs_sum, i);
+  //   sqr_sum += __shfl_down_sync(-1, sqr_sum, i);
 
-//   if (tid == 0) // cache[0] now contains block_sum
-//   {
-//     atomicAdd(z, cache[0]);
-//   }
-// }
+  //   double tmp = __shfl_down_sync(-1, mod_max, i);
+  //   mod_max = (tmp > mod_max) ? tmp : mod_max;
+  //   tmp = __shfl_down_sync(-1, min, i);
+  //   min = (tmp < min) ? tmp : min;
+  //   tmp = __shfl_down_sync(-1, max, i);
+  //   max = (tmp > max) ? tmp : max;
+
+  //   z_entries += __shfl_down_sync(-1, z_entries, i);
+  // }
+  for (int i = blockDim.x / 2; i != 0; i /= 2) {
+    //__syncthreads();
+    sum += __shfl_xor_sync(-1, sum, i);
+    abs_sum += __shfl_xor_sync(-1, abs_sum, i);
+    sqr_sum += __shfl_xor_sync(-1, sqr_sum, i);
+
+    double tmp = __shfl_xor_sync(-1, mod_max, i);
+    mod_max = (tmp > mod_max) ? tmp : mod_max;
+    tmp = __shfl_xor_sync(-1, min, i);
+    min = (tmp < min) ? tmp : min;
+    tmp = __shfl_xor_sync(-1, max, i);
+    max = (tmp > max) ? tmp : max;
+
+    z_entries += __shfl_xor_sync(-1, z_entries, i);
+  }
+
+  if (tid == 0) 
+  {
+    atomicAdd(results, sum);
+    atomicAdd(results+1, abs_sum);
+    atomicAdd(results+2, sqr_sum);
+
+    atomicMax(results+3, mod_max);
+    atomicMin(results+4, min);
+    atomicMax(results+5, max);
+
+    atomicAdd(results+6, z_entries);
+  }
+  // if (tid == 0) 
+  // {
+  //   atomicCAS(results, *results, sum);
+  //   atomicCAS(results+1, *results+1, abs_sum);
+  //   atomicCAS(results+2, *results+2, sqr_sum);
+
+  //   atomicCAS(results+3, *results+3, mod_max);
+  //   atomicCAS(results+4, *results+4, min);
+  //   atomicCAS(results+5, *results+5, max);
+
+  //   atomicCAS(results+6, *results+6, z_entries);
+  // }
+ }
 
 int main(void) {
   Timer timer;
@@ -246,6 +311,7 @@ int main(void) {
 #endif
     double *x = (double *)malloc(sizeof(double) * N);
     double *results = (double *)malloc(sizeof(double) * 7);
+    double *results2 = (double *)malloc(sizeof(double) * 7);
     std::vector<std::string> names {"sum", "abs_sum", "sqr_sum", "mod_max", "min", "max", "zero_entries"};
 
     std::generate_n(x, N, [n = -N/2] () mutable { return n++; });
@@ -261,6 +327,7 @@ int main(void) {
     results[3] = x[0];
     results[4] = x[0];
     results[5] = x[0];
+    std::copy(results, results+7, results2);
     /*result[0] = sum;
     * result[1] = abs_sum;
     * result[2] = sqr_sum;
@@ -273,13 +340,17 @@ int main(void) {
     // allocate device memory
     //
 #ifdef DEBUG
+    std::cout << "Initialized results containers: " << std::endl;
+    printContainer(results, 7);
+    printContainer(results2, 7);
     std::cout << "Allocating CUDA arrays..." << std::endl;
 #endif
     double *cuda_x;
     double *cuda_results;
+    double *cuda_results2;
     cudaMalloc(&cuda_x, sizeof(double) * N);
     cudaMalloc(&cuda_results, sizeof(double) * 7);
-  
+    cudaMalloc(&cuda_results2, sizeof(double) * 7);
     //
     // Copy data to GPU
     //
@@ -288,6 +359,7 @@ int main(void) {
 #endif
     cudaMemcpy(cuda_x, x, sizeof(double) * N, cudaMemcpyHostToDevice);
     cudaMemcpy(cuda_results, results, sizeof(double) * 7, cudaMemcpyHostToDevice);
+    cudaMemcpy(cuda_results2, results, sizeof(double) * 7, cudaMemcpyHostToDevice);
 
     //
     // Let CUBLAS do the work:
@@ -305,10 +377,20 @@ int main(void) {
 #ifdef DEBUG
     std::cout << "Running dot products with custom analyze_x_shared..." << std::endl;
 #endif
+    cudaMemcpy(cuda_results, results, sizeof(double) * 7, cudaMemcpyHostToDevice);
     timer.reset();
     analyze_x_shared<<<GRID_SIZE, BLOCK_SIZE>>>(N, cuda_x, cuda_results);
     cudaMemcpy(results, cuda_results, sizeof(double) * 7, cudaMemcpyDeviceToHost);
     double time_shared = timer.get();
+
+#ifdef DEBUG
+    std::cout << "Running dot products with custom analyze_x_warp..." << std::endl;
+#endif
+    cudaMemcpy(cuda_results2, results2, sizeof(double) * 7, cudaMemcpyHostToDevice);
+    timer.reset();
+    analyze_x_warp<<<GRID_SIZE, BLOCK_SIZE>>>(N, cuda_x, cuda_results2);
+    cudaMemcpy(results2, cuda_results2, sizeof(double) * 7, cudaMemcpyDeviceToHost);
+    double time_warp = timer.get();
 
     //
     // Compare results
@@ -317,10 +399,13 @@ int main(void) {
       std::cout << "DEBUG output:" << std::endl;
       std::cout << "x:" << std::endl;
       printContainer(x, N);
-
+      std::cout << ">SHARED<" << std::endl;
       printResults(results, names, names.size());
-
       std::cout << "GPU shared runtime: " << time_shared << std::endl;
+
+      std::cout << ">WARP<" << std::endl;
+      printResults(results2, names, names.size());
+      std::cout << "GPU warp runtime: " << time_warp << std::endl;
 #endif
 
     //
@@ -332,9 +417,11 @@ int main(void) {
 #endif
     free(x);
     free(results);
+    free(results2);
 
     cudaFree(cuda_x);
     cudaFree(cuda_results);
+    cudaFree(cuda_results2);
 
     cublasDestroy(h);
   }
