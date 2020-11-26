@@ -1,0 +1,5 @@
+https://gtx1080.360252.org/2020/ex6/ph_data.csv
+https://gtx1080.360252.org/2020/ex6/ph_results.csv
+https://gtx1080.360252.org/2020/ex6/ph_results2.csv
+https://gtx1080.360252.org/2020/ex6/ph_results3.csv
+https://gtx1080.360252.org/2020/ex6/ph_results_ref.csv
