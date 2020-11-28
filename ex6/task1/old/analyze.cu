@@ -437,11 +437,8 @@ int main(void) {
     std::cout << "Running analyze_x_warp<N/BS, BS>..." << std::endl;
 #endif
     cudaMemcpy(cuda_results, results3, sizeof(double) * 7, cudaMemcpyHostToDevice);
-    int adapt_gridsize = (N + BLOCK_SIZE - 1) / BLOCK_SIZE; 
-    // N/BLOCK_SIZE could results in a gridsize smaller than 1.
-    // also,
     timer.reset();
-    analyze_x_warp<<<adapt_gridsize, BLOCK_SIZE>>>(N, cuda_x, cuda_results);
+    analyze_x_warp<<<1 + (int)N/BLOCK_SIZE, BLOCK_SIZE>>>(N, cuda_x, cuda_results);
     cudaMemcpy(results3, cuda_results, sizeof(double) * 7, cudaMemcpyDeviceToHost);
     double time_warp_adapt = timer.get();
 
