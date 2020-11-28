@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <numeric>
 #include <cmath>
-#include <cublas_v2.h>
-#include <cuda_runtime.h>
+// #include <cublas_v2.h>
+// #include <cuda_runtime.h>
 #include <fstream>
 #include <iostream>
 #include <stdio.h>
@@ -108,12 +108,20 @@ __global__ void A_MatMul_Xcm(int N, int K,
     int row_start = csr_rowoffsets[tid];
     int row_end = csr_rowoffsets[tid + 1];
 
-    for (int k = 0; k < K; ++k){
-      double sum = 0.0;
-      for (int i = row_start; i < row_end; i++) {
-        sum += csr_values[i]* X[csr_colindices[i]*K + k];
+    // for (int k = 0; k < K; ++k){
+    //   double sum = 0.0;
+    //   for (int i = row_start; i < row_end; i++) {
+    //     sum += csr_values[i]* X[csr_colindices[i]*K + k];
+    //   }
+    //   Y[k + tid*K] = sum;
+    // }
+
+    for (int i = row_start; i < row_end; i++) {
+      double aij = csr_values[i];
+      int row_of_X = csr_colindices[i]*K;
+      for (int k = 0; k < K; ++k){
+        Y[k + tid*K] += aij * X[row_of_X + k];
       }
-      Y[k + tid*K] = sum;
     }
   }
 }
@@ -175,7 +183,7 @@ __global__ void A_MatMul_Xrm(int N, int K,
 int main(void) {
   Timer timer;
   // std::vector<int> vec_Ns{100, 1000, 10000,  100000, 1000000, 10000000, 100000000};
-  std::vector<int> vec_Ns{4};
+  std::vector<int> vec_Ns{4, 9, 16};
 
 #ifdef CSV
   // std::fstream csv_times, csv_results, csv_results2, csv_results3, csv_results_ref;
@@ -221,20 +229,22 @@ int main(void) {
     double* X = (double *)malloc(sizeof(double) * N * K);
     double* Y = (double *)malloc(sizeof(double) * N * K);
     double* Y2 = (double *)malloc(sizeof(double) * N * K);
-    double* x = (double *)malloc(sizeof(double) * N);
+    // double* x = (double *)malloc(sizeof(double) * N);
     double* y = (double *)malloc(sizeof(double) * N);
     std::fill(X, X + (N*K), 1.);
-    std::fill(x, x + N, 1.);
+    std::fill(Y, Y + (N*K), 0.);
+    std::fill(Y2, Y2 + (N*K), 0.);
+    // std::fill(x, x + N, 1.);
 
     double *cuda_X;
     double *cuda_Y;
-    double *cuda_Y2;
-    double *cuda_x;
+    // double *cuda_Y2;
+    // double *cuda_x;
     double *cuda_y;
     cudaMalloc(&cuda_X, sizeof(double) * N*K);
     cudaMalloc(&cuda_Y, sizeof(double) * N*K);
-    cudaMalloc(&cuda_Y2, sizeof(double) * N*K);
-    cudaMalloc(&cuda_x, sizeof(double) * N);
+    // cudaMalloc(&cuda_Y2, sizeof(double) * N*K);
+    // cudaMalloc(&cuda_x, sizeof(double) * N);
     cudaMalloc(&cuda_y, sizeof(double) * N);
 
     // Matrix
@@ -255,7 +265,9 @@ int main(void) {
     std::cout << "Copying data to GPU..." << std::endl;
 #endif
     cudaMemcpy(cuda_X, X, sizeof(double) * N*K, cudaMemcpyHostToDevice);
-    cudaMemcpy(cuda_x, x, sizeof(double) * N, cudaMemcpyHostToDevice);
+    cudaMemcpy(cuda_Y, Y, sizeof(double) * N*K, cudaMemcpyHostToDevice);
+    // cudaMemcpy(cuda_Y2, Y2, sizeof(double) * N*K, cudaMemcpyHostToDevice);
+    // cudaMemcpy(cuda_x, X, sizeof(double) * N, cudaMemcpyHostToDevice);
 //    cudaMemcpy(cuda_y, y, sizeof(double) * N*K, cudaMemcpyHostToDevice);
 
 // Assemble A
@@ -285,7 +297,7 @@ int main(void) {
       cuda_csr_matvec_product<<<GRID_SIZE, BLOCK_SIZE>>>(
         N, 
         cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values,
-        cuda_x, cuda_y);
+        cuda_X, cuda_y);
     cudaMemcpy(y, cuda_y, sizeof(double) * N, cudaMemcpyDeviceToHost);
     double time_single = timer.get();
 
@@ -303,12 +315,13 @@ int main(void) {
 #ifdef DEBUG
     std::cout << "Running ColumnMajor stacked kernel..." << std::endl;
 #endif
+    cudaMemcpy(cuda_Y, Y2, sizeof(double) * N*K, cudaMemcpyHostToDevice);
     timer.reset();
     A_MatMul_Xcm<<<GRID_SIZE, BLOCK_SIZE>>>(
         N, K,
         cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values,
-        cuda_X, cuda_Y2);
-    cudaMemcpy(Y2, cuda_Y2, sizeof(double) * N*K, cudaMemcpyDeviceToHost);
+        cuda_X, cuda_Y);
+    cudaMemcpy(Y2, cuda_Y, sizeof(double) * N*K, cudaMemcpyDeviceToHost);
     double time_cm_stacked = timer.get();
 
 
@@ -321,7 +334,7 @@ int main(void) {
     std::cout << "DEBUG output:" << std::endl;
     // int only = 4;
     std::cout << "A (non zero entries by row)" << std::endl;
-    int csr_values_size = csr_rowoffsets[N+1];
+    // int csr_values_size = csr_rowoffsets[N+1];
     // printContainer(y, N);
     std::cout << "Row" << std::endl;
     for (int row = 0; row < N; row++){
@@ -344,8 +357,8 @@ int main(void) {
     //
     // Clean up:
     //
-    std::cout << "Cleaning up..." << std::endl;
     std::cout << "----------------------------------------------------" << std::endl;
+    std::cout << "Cleaning up..." << std::endl;
 #endif
 
 #ifdef CSV
@@ -360,7 +373,7 @@ int main(void) {
     free(X);
     free(Y);
     free(Y2);
-    free(x);
+    // free(x);
     free(y);
     free(csr_rowoffsets); 
     free(csr_colindices);
@@ -368,12 +381,15 @@ int main(void) {
 
     cudaFree(cuda_X);
     cudaFree(cuda_Y);
-    cudaFree(cuda_Y2);
-    cudaFree(cuda_x);
-    cudaFree(cuda_x);
+    // cudaFree(cuda_Y2);
+    // cudaFree(cuda_x);
+    cudaFree(cuda_y);
     cudaFree(cuda_csr_rowoffsets); 
     cudaFree(cuda_csr_colindices);
     cudaFree(cuda_csr_values);
+#ifdef DEBUG
+    std::cout << "Clean up done!" << std::endl;
+#endif
   }
 
 #ifdef CSV
