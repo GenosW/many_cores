@@ -183,7 +183,7 @@ __global__ void A_MatMul_Xrm(int N, int K,
 int main(void) {
   Timer timer;
   // std::vector<int> vec_Ns{100, 1000, 10000,  100000, 1000000, 10000000, 100000000};
-  std::vector<int> vec_Ns{4, 9, 16};
+  std::vector<int> vec_Ns{1000000};
 
 #ifdef CSV
   // std::fstream csv_times, csv_results, csv_results2, csv_results3, csv_results_ref;
@@ -210,7 +210,7 @@ int main(void) {
 #endif
 
   for (int& N : vec_Ns) {
-    int K = 3;
+    int K = 16;
 #ifdef DEBUG
     std::cout << "N = " << N << std::endl;
     std::cout << "K = " << K << std::endl;
@@ -337,17 +337,18 @@ int main(void) {
     // int csr_values_size = csr_rowoffsets[N+1];
     // printContainer(y, N);
     std::cout << "Row" << std::endl;
-    for (int row = 0; row < N; row++){
+    int max_output = 10;
+    for (int row = 0; row < min(N, max_output); row++){
       std::cout << row << ": ";
-      printContainer(csr_values + csr_rowoffsets[row], csr_rowoffsets[row+1]-csr_rowoffsets[row]);
+      printContainer(csr_values + csr_rowoffsets[row], min(csr_rowoffsets[row+1]-csr_rowoffsets[row], max_output));
     }
 
     std::cout << "y:" << std::endl;
-    printContainer(y, N);
+    printContainer(y, min(N, max_output));
     std::cout << "Y_rm:" << std::endl;
-    printContainerStrided(Y, N*K, K);
+    printContainerStrided(Y, min(N, max_output)*K, K);
     std::cout << "Y_cm:" << std::endl;
-    printContainerStrided(Y2, N*K, K);
+    printContainerStrided(Y2, min(N, max_output)*K, K);
 
 
     std::cout << "Single runtime: " << time_single << std::endl;
