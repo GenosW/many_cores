@@ -12,6 +12,7 @@
 
 #define BLOCK_SIZE 256
 #define GRID_SIZE 128
+#define TESTS 5
 // #define SEP ";"
 
 // #define DEBUG
@@ -52,6 +53,22 @@ void printResults(double* results, double* ref, std::vector<std::string> names, 
   }
 }
 
+double median(std::vector<double>& vec)
+{
+  // modified taken from here: https://stackoverflow.com/questions/2114797/compute-median-of-values-stored-in-vector-c
+
+  size_t size = vec.size();
+
+  if (size == 0)
+          return 0.;
+
+  sort(vec.begin(), vec.end());
+
+  size_t mid = size/2;
+
+  return size % 2 == 0 ? (vec[mid] + vec[mid-1]) / 2 : vec[mid];
+}
+
 // ------------------ KERNELS ---------------
 
 /** atomicMax for double
@@ -67,9 +84,6 @@ __device__ void atomicMax(double* address, double val){
   do  {
     assumed = old;
     old = atomicCAS(address_as_ull, assumed, __double_as_longlong(fmax(val, __longlong_as_double(assumed))));
-    // atomicCAS returns the value that is stored in address AFTER the CAS
-    // atomicCAS(a, b, c) --> return c
-    //
   } while (assumed != old);
 }
 
@@ -81,9 +95,6 @@ __device__ void atomicMin(double* address, double val){
   do  {
     assumed = old;
     old = atomicCAS(address_as_ull, assumed, __double_as_longlong(fmin(val, __longlong_as_double(assumed))));
-    // atomicCAS returns the value that is stored in address AFTER the CAS
-    // atomicCAS(a, b, c) --> return c
-    //
   } while (assumed != old);
 }
 
@@ -288,6 +299,7 @@ int main(void) {
   Timer timer;
   std::vector<int> vec_Ns{100, 1000, 10000,  100000, 1000000, 10000000, 100000000};
   // std::vector<int> vec_Ns{100, 1000};
+  std::vector<double> times(TESTS, 0.);
 
 #ifdef CSV
   std::fstream csv_times, csv_results, csv_results2, csv_results3, csv_results_ref;
@@ -404,56 +416,70 @@ int main(void) {
     std::cout << "Running dot products with CUBLAS..." << std::endl;
 #endif
     double *cublas = (double *)malloc(sizeof(double));
-    *cublas= 0.0;
-    cudaMemcpy(cuda_scalar, &cublas, sizeof(double), cudaMemcpyHostToDevice);
-    timer.reset();
-    cublasDdot(h, N, cuda_x, 1, cuda_x, 1, cublas);
-    // cublasDnrm2(h, N-1, cuda_x, 1, cuda_scalar);
-    // cudaMemcpy(&cublas, cuda_scalar, sizeof(double), cudaMemcpyDeviceToHost);
-    double time_cublas = timer.get();
+    for (int iter = 0; iter < TESTS; ++iter) {
+      *cublas= 0.0;
+      cudaMemcpy(cuda_scalar, &cublas, sizeof(double), cudaMemcpyHostToDevice);
+      timer.reset();
+      cublasDdot(h, N, cuda_x, 1, cuda_x, 1, cublas);
+      // cublasDnrm2(h, N-1, cuda_x, 1, cuda_scalar);
+      // cudaMemcpy(&cublas, cuda_scalar, sizeof(double), cudaMemcpyDeviceToHost);
+      times[iter] = timer.get();
+    }
+    double time_cublas = median(times);
 #ifdef DEBUG
     std::cout << "cublas: " << *cublas << std::endl;
 #endif
-    free(cublas);
 #ifdef DEBUG
     std::cout << "Running with analyze_x_shared..." << std::endl;
 #endif
-    cudaMemcpy(cuda_results, results, sizeof(double) * 7, cudaMemcpyHostToDevice);
-    timer.reset();
-    analyze_x_shared<<<GRID_SIZE, BLOCK_SIZE>>>(N, cuda_x, cuda_results);
-    cudaMemcpy(results, cuda_results, sizeof(double) * 7, cudaMemcpyDeviceToHost);
-    double time_shared = timer.get();
+  for (int iter = 0; iter < TESTS; ++iter) {
+      cudaMemcpy(cuda_results, results, sizeof(double) * 7, cudaMemcpyHostToDevice);
+      timer.reset();
+      analyze_x_shared<<<GRID_SIZE, BLOCK_SIZE>>>(N, cuda_x, cuda_results);
+      cudaMemcpy(results, cuda_results, sizeof(double) * 7, cudaMemcpyDeviceToHost);
+      times[iter] = timer.get();
+    }
+    double time_shared = median(times);
 
 #ifdef DEBUG
     std::cout << "Running analyze_x_warp<GS, BS>..." << std::endl;
 #endif
-    cudaMemcpy(cuda_results, results2, sizeof(double) * 7, cudaMemcpyHostToDevice);
-    timer.reset();
-    analyze_x_warp<<<GRID_SIZE, BLOCK_SIZE>>>(N, cuda_x, cuda_results);
-    cudaMemcpy(results2, cuda_results, sizeof(double) * 7, cudaMemcpyDeviceToHost);
-    double time_warp = timer.get();
+    for (int iter = 0; iter < TESTS; ++iter) {
+      cudaMemcpy(cuda_results, results2, sizeof(double) * 7, cudaMemcpyHostToDevice);
+      timer.reset();
+      analyze_x_warp<<<GRID_SIZE, BLOCK_SIZE>>>(N, cuda_x, cuda_results);
+      cudaMemcpy(results2, cuda_results, sizeof(double) * 7, cudaMemcpyDeviceToHost);
+      times[iter] = timer.get();
+    }
+    double time_warp = median(times);
 
 #ifdef DEBUG
     std::cout << "Running analyze_x_warp<N/BS, BS>..." << std::endl;
 #endif
-    cudaMemcpy(cuda_results, results3, sizeof(double) * 7, cudaMemcpyHostToDevice);
-    int adapt_gridsize = (N + BLOCK_SIZE - 1) / BLOCK_SIZE; 
-    // N/BLOCK_SIZE could results in a gridsize smaller than 1.
-    // also,
-    timer.reset();
-    analyze_x_warp<<<adapt_gridsize, BLOCK_SIZE>>>(N, cuda_x, cuda_results);
-    cudaMemcpy(results3, cuda_results, sizeof(double) * 7, cudaMemcpyDeviceToHost);
-    double time_warp_adapt = timer.get();
+    for (int iter = 0; iter < TESTS; ++iter) {
+      cudaMemcpy(cuda_results, results3, sizeof(double) * 7, cudaMemcpyHostToDevice);
+      int adapt_gridsize = (N + BLOCK_SIZE - 1) / BLOCK_SIZE; 
+      // N/BLOCK_SIZE could results in a gridsize smaller than 1.
+      // also,
+      timer.reset();
+      analyze_x_warp<<<adapt_gridsize, BLOCK_SIZE>>>(N, cuda_x, cuda_results);
+      cudaMemcpy(results3, cuda_results, sizeof(double) * 7, cudaMemcpyDeviceToHost);
+      times[iter] = timer.get();
+    }
+    double time_warp_adapt = median(times);
 
 #ifdef DEBUG
     std::cout << "Running dot product xDOTy..." << std::endl;
 #endif
-    double dot = 0.0;
-    cudaMemcpy(cuda_scalar, &dot, sizeof(double), cudaMemcpyHostToDevice);
-    timer.reset();
-    xDOTy<<<GRID_SIZE, BLOCK_SIZE>>>(N, cuda_x, cuda_x, cuda_scalar);
-    cudaMemcpy(&dot, cuda_scalar, sizeof(double), cudaMemcpyDeviceToHost);
-    double time_dot = timer.get();
+    for (int iter = 0; iter < TESTS; ++iter) {
+      double dot = 0.0;
+      cudaMemcpy(cuda_scalar, &dot, sizeof(double), cudaMemcpyHostToDevice);
+      timer.reset();
+      xDOTy<<<GRID_SIZE, BLOCK_SIZE>>>(N, cuda_x, cuda_x, cuda_scalar);
+      cudaMemcpy(&dot, cuda_scalar, sizeof(double), cudaMemcpyDeviceToHost);
+      times[iter] = timer.get();
+    }
+    double time_dot = median(times);
 
     //
     // Compare results
@@ -497,6 +523,7 @@ int main(void) {
     free(results2);
     free(results3);
     free(results_ref);
+    free(cublas);
 
     cudaFree(cuda_x);
     cudaFree(cuda_results);
