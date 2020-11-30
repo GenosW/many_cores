@@ -203,8 +203,10 @@ __global__ void A_MatMul_Xrm_boost(int N, int K,
 
 int main(void) {
   Timer timer;
-  std::vector<int> vec_Ns{100, 10000, 1000000, 10000000};
-  std::vector<int> vec_Ks{2, 4, 8, 16};
+  std::vector<int> vec_Ns{100, 10000, 1000000};
+  // std::vector<int> vec_Ks{2, 4, 8, 16};
+  // std::vector<int> vec_Ns{1000, 100000};
+  std::vector<int> vec_Ks{3, 5, 9, 15};
   // std::vector<int> vec_Ns{1000000};
 
 #ifdef CSV
