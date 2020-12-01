@@ -161,38 +161,49 @@ __global__ void A_MatMul_Xcm(int N, int K,
     }
   }
 }
+
+// // Y = A * X
+// __global__ void A_MatMul_Xrm(int N, int K, int *csr_rowoffsets,
+//   int *csr_colindices, double *csr_values,
+//   double *x, double *y)
+// {
+//   for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < N; i += blockDim.x * gridDim.x) {
+
+//     for (int k = 0; k < K; k++) {
+//       double sum = 0;
+
+//       for (int jj = csr_rowoffsets[i]; jj < csr_rowoffsets[i + 1]; jj++) {
+//         sum += csr_values[jj] * x[csr_colindices[jj]*K + k];
+//       }
+
+//       y[i + N*k] = sum;
+//     }
+
+//   }
+// }
+
+
+// // Y = A * X
+// __global__ void A_MatMul_Xcm(int N, int K, int *csr_rowoffsets,
+//   int *csr_colindices, double *csr_values,
+//   double *x, double *y)
+// {
+//   for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < N; i += blockDim.x * gridDim.x) {
+
+//     for (int k = 0; k < K; k++) {
+//       double sum = 0;
+
+//       for (int jj = csr_rowoffsets[i]; jj < csr_rowoffsets[i + 1]; jj++) {
+//         sum += csr_values[jj] * x[csr_colindices[jj] + N*k];
+//       }
+
+//       y[i + N*k] = sum;
+//     }
+
+//   }
+// }
 // END--------------- KERNELS ------------------END // 
 //
-
-/**TO-DO:
- * Adapt signature
- *
- */
-// void assemble_csr_on_gpu(){
-//     // Perform the calculations
-//     int numberOfValues;
-//     timer.reset();
-//     count_nnz<<<GRID_SIZE, BLOCK_SIZE>>>(cuda_row_offsets_2, N, M);
-//     exclusive_scan(cuda_row_offsets_2, cuda_row_offsets, N*M+1);
-//     cudaMemcpy(row_offsets, cuda_row_offsets, sizeof(int) * (N*M+1), cudaMemcpyDeviceToHost);
-//     numberOfValues = row_offsets[N*M];
-
-//   #ifdef DEBUG
-//     printContainer(row_offsets, N*M+1, 4);
-//     std::cout << std::endl;
-//   #endif
-
-//     double *values = (double *)malloc(sizeof(double) * numberOfValues);
-//     int *columns = (int *)malloc(sizeof(int) * numberOfValues);
-//     cudaMalloc(&cuda_columns, sizeof(int) * numberOfValues);
-//     cudaMalloc(&cuda_values, sizeof(double) * numberOfValues);
-
-//     assembleA<<<GRID_SIZE, BLOCK_SIZE>>>(cuda_values, cuda_columns, cuda_row_offsets, N, M);
-//     double time_assemble_gpu = timer.get();
-
-//     cudaMemcpy(values, cuda_values, sizeof(double) * numberOfValues, cudaMemcpyDeviceToHost);
-//     cudaMemcpy(columns, cuda_columns, sizeof(int) * numberOfValues, cudaMemcpyDeviceToHost);
-//   }
 
 int main(void) {
   Timer timer;
