@@ -75,8 +75,7 @@ double median(std::vector<double>& vec)
  * 
  * References:
  * (1) https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomicmax
- * (2) https://www.micc.unifi.it/bertini/download/gpu-programming-basics/2017/gpu_cuda_5.pdf
- * (3) https://stackoverflow.com/questions/17399119/cant-we-use-atomic-operations-for-floating-point-variables-in-cuda
+ * (2) https://stackoverflow.com/questions/17399119/cant-we-use-atomic-operations-for-floating-point-variables-in-cuda
  */
 __device__ void atomicMax(double* address, double val){    
   unsigned long long int* address_as_ull = (unsigned long long int*) address; 
@@ -125,6 +124,29 @@ __global__ void xDOTy(const int N, double *x, double *y, double *scalar) {
   if (tid == 0) // cache[0] now contains block_sum
   {
     atomicAdd(scalar, cache[0]);
+  }
+}
+
+/** scalar = x DOT y
+ */
+ __global__ void xDOTy_warp(const int N, double *x, double *y, double *scalar) {
+  int tid = threadIdx.x + blockDim.x * blockIdx.x;
+  const int stride = blockDim.x * gridDim.x;
+
+  double sum = 0.0;
+  for (; tid < N; tid += stride) {
+    sum += x[tid] * y[tid];
+  }
+  tid = threadIdx.x;
+
+  __syncwarp();
+  for (int i = warpSize / 2; i != 0; i /= 2) {
+    sum += __shfl_down_sync(0xffffffff, sum, i);
+  }
+
+  if (tid % warpSize == 0) // a block can consist of multiple warps
+  {
+    atomicAdd(scalar, sum);
   }
 }
 
@@ -314,7 +336,7 @@ int main(void) {
   csv_results3.open(csv_results3_name, std::fstream::out | std::fstream::trunc);
   csv_results_ref.open(csv_results_ref_name, std::fstream::out | std::fstream::trunc);
 
-  std::string header = "N;time_shared;time_warp;time_warp_adapt;time_dot;time_cpuref;time_cublas";
+  std::string header = "N;time_shared;time_warp;time_warp_adapt;time_dot;time_dot_warp;time_cpuref;time_cublas";
     // to csv file
   csv_times << header << std::endl;
   
@@ -481,6 +503,18 @@ int main(void) {
     }
     double time_dot = median(times);
 
+#ifdef DEBUG
+    std::cout << "Running dot product xDOTy_warp..." << std::endl;
+#endif
+    for (int iter = 0; iter < TESTS; ++iter) {
+      double dot = 0.0;
+      cudaMemcpy(cuda_scalar, &dot, sizeof(double), cudaMemcpyHostToDevice);
+      timer.reset();
+      xDOTy_warp<<<GRID_SIZE, BLOCK_SIZE>>>(N, cuda_x, cuda_x, cuda_scalar);
+      cudaMemcpy(&dot, cuda_scalar, sizeof(double), cudaMemcpyDeviceToHost);
+      times[iter] = timer.get();
+    }
+    double time_dot_warp = median(times);
     //
     // Compare results
     //
@@ -500,6 +534,7 @@ int main(void) {
     std::cout << "GPU warp runtime: " << time_warp << std::endl;
     std::cout << "GPU warp adaptive runtime: " << time_warp_adapt << std::endl;
     std::cout << "GPU dot runtime: " << time_dot << std::endl;
+    std::cout << "GPU dot_warp runtime: " << time_dot_warp << std::endl;
     std::cout << "CPU ref runtime: " << time_cpuref << std::endl;
 
     //
@@ -511,7 +546,7 @@ int main(void) {
 
 #ifdef CSV
     std::string sep = ";";
-    csv_times << N << sep << time_shared << sep << time_warp << sep << time_warp_adapt << sep << time_dot << sep << time_cpuref << sep << time_cublas << std::endl;
+    csv_times << N << sep << time_shared << sep << time_warp << sep << time_warp_adapt << sep << time_dot << sep << time_dot_warp << sep << time_cpuref << sep << time_cublas << std::endl;
 
     toCSV(csv_results, results, 7);
     toCSV(csv_results2, results2, 7);

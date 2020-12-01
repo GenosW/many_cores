@@ -14,7 +14,6 @@
 #define BLOCK_SIZE 256
 #define GRID_SIZE 256
 // #define SEP ";"
-#define TESTS 5
 
 // #define DEBUG
 #ifndef DEBUG
@@ -78,17 +77,6 @@ void toCSV(std::fstream& csv, T* array, int size) {
     csv << ";" << array[i];
   }
   csv << std::endl;
-}
-
-double median(std::vector<double>& vec)
-{
-  size_t size = vec.size();
-  if (size == 0)
-    return 0.;
-
-  sort(vec.begin(), vec.end());
-  size_t mid = size/2;
-  return size % 2 == 0 ? (vec[mid] + vec[mid-1]) / 2 : vec[mid];
 }
 // END--------------- CONVENIENCE FUNCTIONS ------------------END // 
 
@@ -200,7 +188,6 @@ int main(void) {
   // std::vector<int> vec_Ns{1000000};
   std::vector<int> vec_Ks{2, 4, 8, 16};
   // std::vector<int> vec_Ks{3, 5, 9, 15};
-  std::vector<double> times(TESTS, 0);
 
 #ifdef CSV
   std::fstream csv_times;
@@ -288,46 +275,37 @@ int main(void) {
 
       std::cout << "Running per vector product kernel K times..." << std::endl;
 #endif
-      for (int iter = 0; iter < TESTS; iter++){
-        timer.reset();
-        for (int k = 0; k < K; ++k)
-          cuda_csr_matvec_product<<<GRID_SIZE, BLOCK_SIZE>>>(
-            N, 
-            cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values,
-            cuda_X, cuda_y);
-        cudaMemcpy(y, cuda_y, sizeof(double) * N, cudaMemcpyDeviceToHost);
-        times[iter] = timer.get();
-      } 
-      double time_single = median(times);
+      timer.reset();
+      for (int k = 0; k < K; ++k)
+        cuda_csr_matvec_product<<<GRID_SIZE, BLOCK_SIZE>>>(
+          N, 
+          cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values,
+          cuda_X, cuda_y);
+      cudaMemcpy(y, cuda_y, sizeof(double) * N, cudaMemcpyDeviceToHost);
+      double time_single = timer.get();
 
   #ifdef DEBUG
       std::cout << "Running RowMajor stacked kernel..." << std::endl;
   #endif
-      for (int iter = 0; iter < TESTS; iter++){
-        timer.reset();
-        A_MatMul_Xrm<<<GRID_SIZE, BLOCK_SIZE>>>(
-            N, K,
-            cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values,
-            cuda_X, cuda_Y);
-        cudaMemcpy(Y, cuda_Y, sizeof(double) * N*K, cudaMemcpyDeviceToHost);
-        times[iter] = timer.get();
-      }
-      double time_rm_stacked = median(times);
+      timer.reset();
+      A_MatMul_Xrm<<<GRID_SIZE, BLOCK_SIZE>>>(
+          N, K,
+          cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values,
+          cuda_X, cuda_Y);
+      cudaMemcpy(Y, cuda_Y, sizeof(double) * N*K, cudaMemcpyDeviceToHost);
+      double time_rm_stacked = timer.get();
 
   #ifdef DEBUG
       std::cout << "Running ColumnMajor stacked kernel..." << std::endl;
   #endif
       cudaMemcpy(cuda_Y, Y2, sizeof(double) * N*K, cudaMemcpyHostToDevice);
-      for (int iter = 0; iter < TESTS; iter++){
-        timer.reset();
-        A_MatMul_Xcm<<<GRID_SIZE, BLOCK_SIZE>>>(
-            N, K,
-            cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values,
-            cuda_X, cuda_Y);
-        cudaMemcpy(Y2, cuda_Y, sizeof(double) * N*K, cudaMemcpyDeviceToHost);
-        times[iter] = timer.get();
-      }
-      double time_cm_stacked = median(times);
+      timer.reset();
+      A_MatMul_Xcm<<<GRID_SIZE, BLOCK_SIZE>>>(
+          N, K,
+          cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values,
+          cuda_X, cuda_Y);
+      cudaMemcpy(Y2, cuda_Y, sizeof(double) * N*K, cudaMemcpyDeviceToHost);
+      double time_cm_stacked = timer.get();
 
 
 
