@@ -7,3 +7,4 @@
 marks
 *.code-workspace
 .vscode
+build
