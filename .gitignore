@@ -5,3 +5,5 @@
 *.cubin
 *.fatbin
 marks
+*.code-workspace
+.vscode
