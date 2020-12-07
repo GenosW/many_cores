@@ -55,15 +55,10 @@ void printResults(double* results, double* ref, std::vector<std::string> names, 
 
 double median(std::vector<double>& vec)
 {
-  // modified taken from here: https://stackoverflow.com/questions/2114797/compute-median-of-values-stored-in-vector-c
-
   size_t size = vec.size();
-
   if (size == 0)
           return 0.;
-
   sort(vec.begin(), vec.end());
-
   size_t mid = size/2;
 
   return size % 2 == 0 ? (vec[mid] + vec[mid-1]) / 2 : vec[mid];

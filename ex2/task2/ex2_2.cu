@@ -138,24 +138,25 @@ int main(void)
   const int option = 2;
 
   std::cout << "N;blocks;block_size;tests_done;total_time;time_per_test;check" << std::endl;
-  size_t N = 256;
+  for (size_t N = 256; N <= 1000000000; N*=10)
   {
+    std::cout << N << std::endl;
     //int blocks = (int)(N+block_size-1)/block_size;
     int blocks = block_size;
     double result = 0.0;
-    double* presult = new double;
-    presult = &result;    
     double result_true = N;
-    double* pnull = new double;
+    double* h_block_sums = (double *)malloc(sizeof(double) * blocks);
+    double* presult = (double *)malloc(sizeof(double));
+    presult = &result;    
+    double* pnull = (double *)malloc(sizeof(double));
     *pnull = 0.0;
     double *d_x, *d_y, *d_block_sums, *d_result;
-    double* h_block_sums;
+
     cudaMalloc(&d_result, sizeof(double));
     cudaMalloc(&d_x, N*sizeof(double));
     cudaMalloc(&d_y, N*sizeof(double));
     cudaMalloc(&d_block_sums, blocks*sizeof(double));
     cudaDeviceSynchronize();
-    h_block_sums = new double[blocks];
 
     int i = 0;
     Timer timer;
@@ -174,21 +175,19 @@ int main(void)
       if (option == 1)
       {
         dot_A_1<<<blocks, block_size>>>(d_x, d_y, d_block_sums,  N);
-        cudaDeviceSynchronize();
         dot_A_2<<<1, block_size>>>(d_block_sums);
         cudaDeviceSynchronize();
       }
       if (option == 2)
       {
         dot_A_1<<<blocks, block_size>>>(d_x, d_y, d_block_sums,  N);
-        cudaDeviceSynchronize();
         cudaMemcpy(h_block_sums, d_block_sums, blocks*sizeof(double), cudaMemcpyDeviceToHost);
         //std::cout << h_block_sums[0] << " =? " << h_block_sums[blocks-1] << std::endl;
         cudaDeviceSynchronize();
         result = 0.0;
-        for (int j = 0; j < blocks/2; j+=4)
+        for (int j = 0; j < blocks; j+=1)
         {
-          result += h_block_sums[j] + h_block_sums[j+1] + h_block_sums[j+2] + h_block_sums[j+3];
+          result += h_block_sums[j];
         }
       }
       if (option == 3)
@@ -238,9 +237,8 @@ int main(void)
     cudaFree(d_y);
     cudaFree(d_block_sums);
     cudaFree(d_result);
-    cudaDeviceSynchronize();
-    free(presult);
-    free(pnull);
+    // free(presult);
+    // free(pnull);
     free(h_block_sums);
     if (N==256) 
     {
