@@ -1,0 +1,3 @@
+https://gtx1080.360252.org/2020/ex7/ph_data_GPU.csv
+https://gtx1080.360252.org/2020/ex7/ph_data_CPU.csv
+https://gtx1080.360252.org/2020/ex7/ph_data_compile.csv

@@ -17,26 +17,26 @@ __kernel void vec_add(__global double *x, __global double *y, unsigned int N) {
     x[i] += y[i];
 };
 
-__kernel void xDOTy(__global double *result, __global double *x,
-                    __global double *y, uint N) {
+__kernel void xDOTy(__global double *result, 
+                    __global double *x,
+                    __global double *y, 
+                    __local cache, uint N) {
   uint gid = get_global_id(0);
   uint lid = get_local_id(0);
   uint stride = get_global_size(0);
-  double dot = 0.0;
+  __local double cache[128];
+  double tmp = 0.0;
   for (uint i = gid; i < N; i += stride)
-    dot += x[i] * y[i];
-
+    tmp = x[i] * y[i];
+  cache[lid] = tmp;
+  
   for (int i = get_local_size(0) / 2; i > 0; i /= 2) {
     barrier(CLK_LOCAL_MEM_FENCE);
     if (lid < i)
       cache[lid] += cache[lid + i];
   }
-  //double val = work_group_reduce_add(gid < N ? dot : 0.); // no opencl2.x on GPU T_T
-
-  if (lid == 0) {
-    // my_atomic_add(result, val);
-    atom_add(result, cache[0]);
-  }
+  if (lid==0)
+    result[get_group_id(0)] = cache[lid];
 };
 
 
