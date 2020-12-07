@@ -301,6 +301,7 @@ int main()
       cl_uint vector_size = N;
       size_t  local_size = LOCAL_SIZE;
       size_t global_size = GLOBAL_SIZE*GLOBAL_SIZE;
+      size_t groups = 1 + int(N/LOCAL_SIZE);
 
       //
       /////////////////////////// Part 4: Run kernel ///////////////////////////////////
@@ -342,7 +343,7 @@ int main()
       err = clEnqueueReadBuffer(my_queue, ocl_dot, CL_TRUE, 0, sizeof(ScalarType)*vector_size, dot_vec.data(), 0, NULL, NULL); OPENCL_ERR_CHECK(err);
 
       timer.reset();
-      double dot = std::accumulate(dot_vec.begin(), dot_vec.end(), 0.);
+      double dot = std::accumulate(dot_vec.begin(), dot_vec.begin()+groups, 0.);
       double cpu_time = timer.get();
       double total_time = ocl_time + cpu_time;
 
@@ -353,14 +354,14 @@ int main()
       std::cout << "Runtime: kernel + cpu = total_time" << std::endl;
       std::cout << ocl_time << " + " << cpu_time << " = " << total_time << std::endl;
 
-        csv << N<< ";" 
-            << target << ";"
-            << local_size<< ";" 
-            << global_size<< ";" 
-            << ocl_time<< ";" 
-            << cpu_time<< ";" 
-            << total_time << ";"
-            << dot << std::endl;
+      csv << N<< ";" 
+          << target << ";"
+          << local_size<< ";" 
+          << global_size<< ";" 
+          << ocl_time<< ";" 
+          << cpu_time<< ";" 
+          << total_time << ";"
+          << dot << std::endl;
   
 
       // std::cout << "Result container:" << std::endl;
