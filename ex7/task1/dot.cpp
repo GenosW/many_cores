@@ -113,11 +113,11 @@ std::string header = "\n"
 "#pragma OPENCL EXTENSION cl_khr_fp64 : enable\n"
 " \n\n";
 std::string kernel_signature = "__kernel void xDOTy";
-std::string kernel_code = "(__global double *result, \n"
+std::string kernel_code1 = "(__global double *result, \n"
 "                    __global double *x,\n"
 "                    __global double *y, \n"
-"                    uint N) {\n"
-"  uint gid = get_global_id(0);\n"
+"                    uint N) {\n";
+std::string kernel_code2 = "  uint gid = get_global_id(0);\n"
 "  uint lid = get_local_id(0);\n"
 "  uint stride = get_global_size(0);\n"
 "   __local double cache[128];\n"
@@ -140,8 +140,8 @@ int main()
 {
   cl_int err;
 
-  bool compute = true;
-  bool compile_M = false;
+  bool compute = false;
+  bool compile_M = true;
   std::vector<uint> M_vec{1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
   if (!compile_M) {
     M_vec.clear();
@@ -230,12 +230,13 @@ int main()
     csv_compile << "M;compile_time;create_time" << std::endl;
   }
   int m = 1;
+
+  std::string ocl_prog = header + kernel_signature + kernel_code1 + kernel_code2;
   for (auto& M : M_vec){
 
     // // To gernerate the M kernels
-    std::string ocl_prog = header + kernel_signature + kernel_code;
     for (; m < M; ++m) {
-      ocl_prog += kernel_signature + std::to_string(m) + kernel_code;
+      ocl_prog += kernel_signature + std::to_string(m) + kernel_code1 + "uint insert" + std::to_string(m) + "=1;\n" + kernel_code2;
     }
     const char * my_opencl_program = ocl_prog.c_str();
 
@@ -387,6 +388,9 @@ int main()
   std::cout << "#" << std::endl;
   std::cout << "# My first OpenCL application finished successfully!" << std::endl;
   std::cout << "#" << std::endl;
+
+  std::cout << "And here it is:" << std::endl;
+  std::cout << ocl_prog;
   return EXIT_SUCCESS;
 }
 
