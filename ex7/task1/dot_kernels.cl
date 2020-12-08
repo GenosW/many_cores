@@ -27,7 +27,7 @@ __kernel void xDOTy(__global double *result,
   __local double cache[128];
   double tmp = 0.0;
   for (uint i = gid; i < N; i += stride)
-    tmp = x[i] * y[i];
+    tmp += x[i] * y[i];
   cache[lid] = tmp;
   
   for (int i = get_local_size(0) / 2; i > 0; i /= 2) {

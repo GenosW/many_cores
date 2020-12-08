@@ -140,8 +140,8 @@ int main()
 {
   cl_int err;
 
-  bool compute = false;
-  bool compile_M = true;
+  bool compute = true;
+  bool compile_M = false;
   std::vector<uint> M_vec{1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
   if (!compile_M) {
     M_vec.clear();
@@ -149,7 +149,7 @@ int main()
   }
   // std::string target = "GeForce GTX 1080";
   std::string target = "GPU";
-  std::vector<uint> N_vec{256, 1000, 10000, 100000, 1000000, 10000000, 100000000};
+  std::vector<uint> N_vec{256, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
   uint N_min = N_vec.front();
   uint N_max = N_vec.back();
   uint cnt = N_vec.size();
@@ -240,11 +240,15 @@ int main()
     }
     const char * my_opencl_program = ocl_prog.c_str();
 
-    timer.reset();
-    size_t source_len = std::string(my_opencl_program).length();
-    prog = clCreateProgramWithSource(my_context, 1, &my_opencl_program, &source_len, &err);OPENCL_ERR_CHECK(err);
-    err = clBuildProgram(prog, 0, NULL, NULL, NULL, NULL);
-
+    std::vector<double> tmp(NUM_TESTS, 0);
+    for (uint iter = 0; iter < NUM_TESTS; iter++){
+      timer.reset();
+      size_t source_len = std::string(my_opencl_program).length();
+      prog = clCreateProgramWithSource(my_context, 1, &my_opencl_program, &source_len, &err);OPENCL_ERR_CHECK(err);
+      err = clBuildProgram(prog, 0, NULL, NULL, NULL, NULL);
+      tmp[iter] = timer.get();
+    }
+    double compile_time = median(tmp);
     //
     // Print compiler errors if there was a problem:
     //
@@ -264,10 +268,12 @@ int main()
     //
     // Extract the only kernel in the program:
     //
-    double compile_time = timer.get();
-    timer.reset();
-    my_kernel = clCreateKernel(prog, "xDOTy", &err); OPENCL_ERR_CHECK(err);
-    double create_time = timer.get();
+    for (uint iter = 0; iter < NUM_TESTS; iter++){
+      timer.reset();
+      my_kernel = clCreateKernel(prog, "xDOTy", &err); OPENCL_ERR_CHECK(err);
+      tmp[iter] = timer.get();
+    }
+    double create_time = median(tmp);
     std::cout << "Time to compile and create kernel: " << compile_time << std::endl;
     csv_compile << M << ";"
                 << compile_time << ";"

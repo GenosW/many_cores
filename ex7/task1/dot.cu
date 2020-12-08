@@ -180,7 +180,7 @@ int main(void)
       }
       if (option == 2)
       {
-        dot_A_1<<<blocks, block_size>>>(d_x, d_y, d_block_sums,  N);
+        dot_A_1<<<BLOCK_SIZE, BLOCK_SIZE>>>(d_x, d_y, d_block_sums,  N);
         cudaMemcpy(h_block_sums, d_block_sums, blocks*sizeof(double), cudaMemcpyDeviceToHost);
         //std::cout << h_block_sums[0] << " =? " << h_block_sums[blocks-1] << std::endl;
         cudaDeviceSynchronize();
