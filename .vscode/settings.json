@@ -3,5 +3,6 @@
     "jupyter.jupyterServerType": "local",
     "clangd.arguments": [
         "nocudalib"
-    ]
+    ],
+    "cmake.sourceDirectory": "${workspaceFolder}/ex7/task2"
 }

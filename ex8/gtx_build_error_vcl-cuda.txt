@@ -1,0 +1,1313 @@
+Compile output
+In file included from ./viennacl/linalg/scalar_operations.hpp:40:0,
+from ./viennacl/scalar.hpp:30,
+from ./viennacl/tools/entry_proxy.hpp:27,
+from ./viennacl/detail/vector_def.hpp:26,
+from viennacl/vector.hpp:27,
+from 6d65350b.cpp:45:
+./viennacl/linalg/cuda/scalar_operations.hpp: In function 'typename viennacl::enable_if<((viennacl::is_scalar::value && viennacl::is_scalar::value) && viennacl::is_any_scalar::value)>::type viennacl::linalg::cuda::as(ScalarT1&, const ScalarT2&, const NumericT&, viennacl::vcl_size_t, bool, bool)':
+./viennacl/linalg/cuda/scalar_operations.hpp:88:14: error: expected primary-expression before '<' token
+as_kernel<<<1, 1>>>(viennacl::cuda_arg(s1),
+^
+./viennacl/linalg/cuda/scalar_operations.hpp:88:21: error: expected primary-expression before '>' token
+as_kernel<<<1, 1>>>(viennacl::cuda_arg(s1),
+^
+./viennacl/linalg/cuda/scalar_operations.hpp: In function 'typename viennacl::enable_if<((((viennacl::is_scalar::value && viennacl::is_scalar::value) && viennacl::is_scalar::value) && viennacl::is_any_scalar::value) && viennacl::is_any_scalar::value)>::type viennacl::linalg::cuda::asbs(ScalarT1&, const ScalarT2&, const NumericT1&, viennacl::vcl_size_t, bool, bool, const ScalarT3&, const NumericT2&, viennacl::vcl_size_t, bool, bool)':
+./viennacl/linalg/cuda/scalar_operations.hpp:208:16: error: expected primary-expression before '<' token
+asbs_kernel<<<1, 1>>>(viennacl::cuda_arg(s1),
+^
+./viennacl/linalg/cuda/scalar_operations.hpp:208:23: error: expected primary-expression before '>' token
+asbs_kernel<<<1, 1>>>(viennacl::cuda_arg(s1),
+^
+./viennacl/linalg/cuda/scalar_operations.hpp: In function 'typename viennacl::enable_if<((((viennacl::is_scalar::value && viennacl::is_scalar::value) && viennacl::is_scalar::value) && viennacl::is_any_scalar::value) && viennacl::is_any_scalar::value)>::type viennacl::linalg::cuda::asbs_s(ScalarT1&, const ScalarT2&, const NumericT1&, viennacl::vcl_size_t, bool, bool, const ScalarT3&, const NumericT2&, viennacl::vcl_size_t, bool, bool)':
+./viennacl/linalg/cuda/scalar_operations.hpp:332:18: error: expected primary-expression before '<' token
+asbs_s_kernel<<<1, 1>>>(viennacl::cuda_arg(s1),
+^
+./viennacl/linalg/cuda/scalar_operations.hpp:332:25: error: expected primary-expression before '>' token
+asbs_s_kernel<<<1, 1>>>(viennacl::cuda_arg(s1),
+^
+./viennacl/linalg/cuda/scalar_operations.hpp: In function 'typename viennacl::enable_if<(viennacl::is_scalar::value && viennacl::is_scalar::value)>::type viennacl::linalg::cuda::swap(ScalarT1&, ScalarT2&)':
+./viennacl/linalg/cuda/scalar_operations.hpp:365:23: error: expected primary-expression before '<' token
+scalar_swap_kernel<<<1, 1>>>(viennacl::cuda_arg(s1), viennacl::cuda_arg(s2));
+^
+./viennacl/linalg/cuda/scalar_operations.hpp:365:30: error: expected primary-expression before '>' token
+scalar_swap_kernel<<<1, 1>>>(viennacl::cuda_arg(s1), viennacl::cuda_arg(s2));
+^
+In file included from ./viennacl/linalg/vector_operations.hpp:43:0,
+from viennacl/vector.hpp:33,
+from 6d65350b.cpp:45:
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::convert_kernel(DestNumericT*, unsigned int, unsigned int, unsigned int, const SrcNumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:51:25: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:51:38: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:51:51: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:53:26: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::convert(viennacl::vector_base&, const viennacl::vector_base&)':
+./viennacl/linalg/cuda/vector_operations.hpp:61:19: error: expected primary-expression before '<' token
+convert_kernel<<<128, 128>>>(viennacl::cuda_arg(dest),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:61:30: error: expected primary-expression before '>' token
+convert_kernel<<<128, 128>>>(viennacl::cuda_arg(dest),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::av_kernel(NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, const NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:94:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:94:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:94:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:96:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:101:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:101:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:101:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:103:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::av_kernel(NumericT*, unsigned int, unsigned int, unsigned int, NumericT, unsigned int, const NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:127:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:127:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:127:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:129:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:134:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:134:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:134:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:136:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::av(viennacl::vector_base&, const viennacl::vector_base&, const ScalarType1&, viennacl::vcl_size_t, bool, bool)':
+./viennacl/linalg/cuda/vector_operations.hpp:161:14: error: expected primary-expression before '<' token
+av_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:161:25: error: expected primary-expression before '>' token
+av_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::avbv_kernel(NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, const NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:208:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:208:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:208:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:210:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:215:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:215:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:215:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:217:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:225:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:225:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:225:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:227:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:232:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:232:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:232:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:234:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::avbv_kernel(NumericT*, unsigned int, unsigned int, unsigned int, NumericT, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, const NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:271:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:271:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:271:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:273:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:278:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:278:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:278:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:280:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:288:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:288:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:288:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:290:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:295:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:295:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:295:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:297:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::avbv_kernel(NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, const NumericT*, unsigned int, unsigned int, NumericT, unsigned int, const NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:334:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:334:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:334:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:336:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:341:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:341:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:341:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:343:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:351:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:351:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:351:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:353:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:358:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:358:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:358:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:360:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::avbv_kernel(NumericT*, unsigned int, unsigned int, unsigned int, NumericT, unsigned int, const NumericT*, unsigned int, unsigned int, NumericT, unsigned int, const NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:397:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:397:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:397:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:399:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:404:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:404:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:404:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:406:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:414:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:414:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:414:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:416:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:421:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:421:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:421:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:423:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::avbv(viennacl::vector_base&, const viennacl::vector_base&, const ScalarT1&, viennacl::vcl_size_t, bool, bool, const viennacl::vector_base&, const ScalarT2&, viennacl::vcl_size_t, bool, bool)':
+./viennacl/linalg/cuda/vector_operations.hpp:458:16: error: expected primary-expression before '<' token
+avbv_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:458:27: error: expected primary-expression before '>' token
+avbv_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::avbv_v_kernel(NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, const NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:512:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:512:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:512:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:514:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:519:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:519:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:519:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:521:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:529:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:529:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:529:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:531:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:536:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:536:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:536:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:538:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::avbv_v_kernel(NumericT*, unsigned int, unsigned int, unsigned int, NumericT, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, const NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:575:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:575:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:575:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:577:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:582:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:582:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:582:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:584:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:592:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:592:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:592:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:594:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:599:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:599:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:599:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:601:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::avbv_v_kernel(NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, const NumericT*, unsigned int, unsigned int, NumericT, unsigned int, const NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:638:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:638:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:638:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:640:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:645:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:645:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:645:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:647:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:655:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:655:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:655:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:657:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:662:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:662:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:662:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:664:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::avbv_v_kernel(NumericT*, unsigned int, unsigned int, unsigned int, NumericT, unsigned int, const NumericT*, unsigned int, unsigned int, NumericT, unsigned int, const NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:701:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:701:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:701:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:703:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:708:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:708:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:708:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:710:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:718:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:718:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:718:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:720:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:725:29: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:725:42: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:725:55: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:727:30: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::avbv_v(viennacl::vector_base&, const viennacl::vector_base&, const ScalarT1&, viennacl::vcl_size_t, bool, bool, const viennacl::vector_base&, const ScalarT2&, viennacl::vcl_size_t, bool, bool)':
+./viennacl/linalg/cuda/vector_operations.hpp:760:18: error: expected primary-expression before '<' token
+avbv_v_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:760:29: error: expected primary-expression before '>' token
+avbv_v_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::vector_assign_kernel(NumericT*, unsigned int, unsigned int, unsigned int, unsigned int, NumericT)':
+./viennacl/linalg/cuda/vector_operations.hpp:790:25: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:790:38: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:790:51: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:792:26: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::vector_assign(viennacl::vector_base&, const ScalarT1&, bool)':
+./viennacl/linalg/cuda/vector_operations.hpp:813:25: error: expected primary-expression before '<' token
+vector_assign_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:813:36: error: expected primary-expression before '>' token
+vector_assign_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::vector_swap_kernel(NumericT*, unsigned int, unsigned int, unsigned int, NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:836:25: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:836:38: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:836:51: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:838:26: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::vector_swap(viennacl::vector_base&, viennacl::vector_base&)':
+./viennacl/linalg/cuda/vector_operations.hpp:855:23: error: expected primary-expression before '<' token
+vector_swap_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:855:34: error: expected primary-expression before '>' token
+vector_swap_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op_kernel(NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:888:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:888:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:888:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:890:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:897:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:897:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:897:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:899:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:906:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:906:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:906:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:908:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op_kernel(NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, NumericT, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:933:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:933:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:933:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:935:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:942:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:942:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:942:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:944:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:951:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:951:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:951:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:953:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op_kernel(NumericT*, unsigned int, unsigned int, unsigned int, NumericT, const NumericT*, unsigned int, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:978:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:978:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:978:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:980:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:987:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:987:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:987:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:989:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:996:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:996:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:996:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:998:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op_int_kernel(NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:1024:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1024:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1024:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1026:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1033:27: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1033:40: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1033:53: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1035:28: error: 'gridDim' was not declared in this scope
+i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op(viennacl::vector_base&, const viennacl::vector_expression, const viennacl::vector_base, viennacl::op_element_binary >&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1057:26: error: expected primary-expression before '<' token
+element_op_int_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1057:37: error: expected primary-expression before '>' token
+element_op_int_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op(viennacl::vector_base&, const viennacl::vector_expression, const viennacl::vector_base, viennacl::op_element_binary >&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1086:22: error: expected primary-expression before '<' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1086:33: error: expected primary-expression before '>' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op(viennacl::vector_base&, const viennacl::vector_expression, const float, viennacl::op_element_binary >&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1115:22: error: expected primary-expression before '<' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1115:33: error: expected primary-expression before '>' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op(viennacl::vector_base&, const viennacl::vector_expression, viennacl::op_element_binary >&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1142:22: error: expected primary-expression before '<' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1142:33: error: expected primary-expression before '>' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op(viennacl::vector_base&, const viennacl::vector_expression, const viennacl::vector_base, viennacl::op_element_binary >&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1169:22: error: expected primary-expression before '<' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1169:33: error: expected primary-expression before '>' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op(viennacl::vector_base&, const viennacl::vector_expression, const double, viennacl::op_element_binary >&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1198:22: error: expected primary-expression before '<' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1198:33: error: expected primary-expression before '>' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op(viennacl::vector_base&, const viennacl::vector_expression, viennacl::op_element_binary >&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1225:22: error: expected primary-expression before '<' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1225:33: error: expected primary-expression before '>' token
+element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::vec_unary_element_op_kernel(NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:1249:25: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x; i < size1; i += gridDim.x * blockDim.x)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1249:38: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x; i < size1; i += gridDim.x * blockDim.x)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1249:51: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x; i < size1; i += gridDim.x * blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1249:80: error: 'gridDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x; i < size1; i += gridDim.x * blockDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::element_op(viennacl::vector_base&, const viennacl::vector_expression, const viennacl::vector_base, viennacl::op_element_unary >&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1257:47: error: expected primary-expression before '<' token
+vec_unary_element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1257:58: error: expected primary-expression before '>' token
+vec_unary_element_op_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::inner_prod_kernel(const NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:1284:32: error: 'blockIdx' was not declared in this scope
+unsigned int group_start1 = (blockIdx.x * size1) / (gridDim.x) * inc1 + start1;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1284:55: error: 'gridDim' was not declared in this scope
+unsigned int group_start1 = (blockIdx.x * size1) / (gridDim.x) * inc1 + start1;
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1292:25: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = threadIdx.x; i < group_size1; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1292:60: error: 'blockDim' was not declared in this scope
+for (unsigned int i = threadIdx.x; i < group_size1; i += blockDim.x)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1294:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = tmp;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1297:30: error: 'blockDim' was not declared in this scope
+for (unsigned int stride = blockDim.x/2; stride > 0; stride /= 2)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1299:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1299:19: note: (if you use '-fpermissive', G++ will accept your code, but allowing the use of an undeclared name is deprecated)
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::vector_sum_kernel_floats(const NumericT*, unsigned int, unsigned int, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:1323:25: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = threadIdx.x; i ^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1323:52: error: 'blockDim' was not declared in this scope
+for (unsigned int i = threadIdx.x; i ^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1331:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = thread_sum;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1333:30: error: 'blockDim' was not declared in this scope
+for (unsigned int stride = blockDim.x/2; stride > 0; stride /= 2)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1335:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::vector_sum_kernel_integers(const NumericT*, unsigned int, unsigned int, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:1365:25: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = threadIdx.x; i ^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1365:52: error: 'blockDim' was not declared in this scope
+for (unsigned int i = threadIdx.x; i ^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1373:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = thread_sum;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1375:30: error: 'blockDim' was not declared in this scope
+for (unsigned int stride = blockDim.x/2; stride > 0; stride /= 2)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1377:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::vector_sum_kernel_unsigned_integers(const NumericT*, unsigned int, unsigned int, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:1402:25: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = threadIdx.x; i ^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1402:52: error: 'blockDim' was not declared in this scope
+for (unsigned int i = threadIdx.x; i ^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1410:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = thread_sum;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1412:30: error: 'blockDim' was not declared in this scope
+for (unsigned int stride = blockDim.x/2; stride > 0; stride /= 2)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1414:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In static member function 'static void viennacl::linalg::cuda::detail::vector_sum_kernel_launcher_integers::apply(const viennacl::vector_base&, unsigned int, ScalarT&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1439:35: error: expected primary-expression before '<' token
+vector_sum_kernel_integers<<<1, 128>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1439:44: error: expected primary-expression before '>' token
+vector_sum_kernel_integers<<<1, 128>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In static member function 'static void viennacl::linalg::cuda::detail::vector_sum_kernel_launcher_unsigned_integers::apply(const viennacl::vector_base&, unsigned int, ScalarT&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1457:44: error: expected primary-expression before '<' token
+vector_sum_kernel_unsigned_integers<<<1, 128>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1457:53: error: expected primary-expression before '>' token
+vector_sum_kernel_unsigned_integers<<<1, 128>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In static member function 'static void viennacl::linalg::cuda::detail::vector_sum_kernel_launcher_floats::apply(const viennacl::vector_base&, unsigned int, ScalarT&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1475:33: error: expected primary-expression before '<' token
+vector_sum_kernel_floats<<<1, 128>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1475:42: error: expected primary-expression before '>' token
+vector_sum_kernel_floats<<<1, 128>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::inner_prod_impl(const viennacl::vector_base&, const viennacl::vector_base&, ScalarT&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1528:22: error: expected primary-expression before '<' token
+inner_prod_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1528:33: error: expected primary-expression before '>' token
+inner_prod_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::inner_prod_cpu(const viennacl::vector_base&, const viennacl::vector_base&, NumericT&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1560:22: error: expected primary-expression before '<' token
+inner_prod_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1560:33: error: expected primary-expression before '>' token
+inner_prod_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::inner_prod_2_kernel(const NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:1593:52: error: 'blockDim' was not declared in this scope
+unsigned int entries_per_thread = (sizex - 1) / (blockDim.x * gridDim.x) + 1;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1593:65: error: 'gridDim' was not declared in this scope
+unsigned int entries_per_thread = (sizex - 1) / (blockDim.x * gridDim.x) + 1;
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1594:34: error: 'blockIdx' was not declared in this scope
+unsigned int vec_start_index = blockIdx.x * blockDim.x * entries_per_thread;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1595:95: error: there are no arguments to 'min' that depend on a template parameter, so a declaration of 'min' must be available [-fpermissive]
+unsigned int vec_stop_index = min((blockIdx.x + 1) * blockDim.x * entries_per_thread, sizex); // don't go beyond size of x
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1600:43: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = vec_start_index + threadIdx.x; i < vec_stop_index; i += blockDim.x) {
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1605:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = group_sum0;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1610:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::inner_prod_3_kernel(const NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:1633:52: error: 'blockDim' was not declared in this scope
+unsigned int entries_per_thread = (sizex - 1) / (blockDim.x * gridDim.x) + 1;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1633:65: error: 'gridDim' was not declared in this scope
+unsigned int entries_per_thread = (sizex - 1) / (blockDim.x * gridDim.x) + 1;
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1634:34: error: 'blockIdx' was not declared in this scope
+unsigned int vec_start_index = blockIdx.x * blockDim.x * entries_per_thread;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1635:95: error: there are no arguments to 'min' that depend on a template parameter, so a declaration of 'min' must be available [-fpermissive]
+unsigned int vec_stop_index = min((blockIdx.x + 1) * blockDim.x * entries_per_thread, sizex); // don't go beyond vec size
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1641:43: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = vec_start_index + threadIdx.x; i < vec_stop_index; i += blockDim.x) {
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1647:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = group_sum0;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1653:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::inner_prod_4_kernel(const NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:1679:52: error: 'blockDim' was not declared in this scope
+unsigned int entries_per_thread = (sizex - 1) / (blockDim.x * gridDim.x) + 1;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1679:65: error: 'gridDim' was not declared in this scope
+unsigned int entries_per_thread = (sizex - 1) / (blockDim.x * gridDim.x) + 1;
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1680:34: error: 'blockIdx' was not declared in this scope
+unsigned int vec_start_index = blockIdx.x * blockDim.x * entries_per_thread;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1681:95: error: there are no arguments to 'min' that depend on a template parameter, so a declaration of 'min' must be available [-fpermissive]
+unsigned int vec_stop_index = min((blockIdx.x + 1) * blockDim.x * entries_per_thread, sizex); // don't go beyond vec size
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1688:43: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = vec_start_index + threadIdx.x; i < vec_stop_index; i += blockDim.x) {
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1695:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = group_sum0;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1702:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::inner_prod_8_kernel(const NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, const NumericT*, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:1734:52: error: 'blockDim' was not declared in this scope
+unsigned int entries_per_thread = (sizex - 1) / (blockDim.x * gridDim.x) + 1;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1734:65: error: 'gridDim' was not declared in this scope
+unsigned int entries_per_thread = (sizex - 1) / (blockDim.x * gridDim.x) + 1;
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1735:34: error: 'blockIdx' was not declared in this scope
+unsigned int vec_start_index = blockIdx.x * blockDim.x * entries_per_thread;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1736:95: error: there are no arguments to 'min' that depend on a template parameter, so a declaration of 'min' must be available [-fpermissive]
+unsigned int vec_stop_index = min((blockIdx.x + 1) * blockDim.x * entries_per_thread, sizex); // don't go beyond vec size
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1747:43: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = vec_start_index + threadIdx.x; i < vec_stop_index; i += blockDim.x) {
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1758:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = group_sum0;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1769:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::vector_multi_sum_kernel(const NumericT*, NumericT*, unsigned int, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:1805:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = vec1[threadIdx.x + blockIdx.x * VIENNACL_MDOT_WORKGROUP_SIZE];
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1805:48: error: 'blockIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = vec1[threadIdx.x + blockIdx.x * VIENNACL_MDOT_WORKGROUP_SIZE];
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1807:30: error: 'blockDim' was not declared in this scope
+for (unsigned int stride = blockDim.x/2; stride > 0; stride /= 2)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:1809:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::inner_prod_impl(const viennacl::vector_base&, const viennacl::vector_tuple&, viennacl::vector_base&)':
+./viennacl/linalg/cuda/vector_operations.hpp:1842:30: error: expected primary-expression before '<' token
+inner_prod_4_kernel<< ^
+./viennacl/linalg/cuda/vector_operations.hpp:1843:61: error: expected primary-expression before '>' token
+VIENNACL_MDOT_WORKGROUP_SIZE>>>( viennacl::cuda_arg(x),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1862:34: error: expected primary-expression before '<' token
+vector_multi_sum_kernel<<<4, VIENNACL_MDOT_WORKGROUP_NUM>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1862:67: error: expected primary-expression before '>' token
+vector_multi_sum_kernel<<<4, VIENNACL_MDOT_WORKGROUP_NUM>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1877:30: error: expected primary-expression before '<' token
+inner_prod_3_kernel<< ^
+./viennacl/linalg/cuda/vector_operations.hpp:1878:61: error: expected primary-expression before '>' token
+VIENNACL_MDOT_WORKGROUP_SIZE>>>( viennacl::cuda_arg(x),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1894:34: error: expected primary-expression before '<' token
+vector_multi_sum_kernel<<<3, VIENNACL_MDOT_WORKGROUP_NUM>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1894:67: error: expected primary-expression before '>' token
+vector_multi_sum_kernel<<<3, VIENNACL_MDOT_WORKGROUP_NUM>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1908:30: error: expected primary-expression before '<' token
+inner_prod_2_kernel<< ^
+./viennacl/linalg/cuda/vector_operations.hpp:1909:61: error: expected primary-expression before '>' token
+VIENNACL_MDOT_WORKGROUP_SIZE>>>( viennacl::cuda_arg(x),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1922:34: error: expected primary-expression before '<' token
+vector_multi_sum_kernel<<<2, VIENNACL_MDOT_WORKGROUP_NUM>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1922:67: error: expected primary-expression before '>' token
+vector_multi_sum_kernel<<<2, VIENNACL_MDOT_WORKGROUP_NUM>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1934:28: error: expected primary-expression before '<' token
+inner_prod_kernel<<<128, 128>>>(viennacl::cuda_arg(x),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1934:39: error: expected primary-expression before '>' token
+inner_prod_kernel<<<128, 128>>>(viennacl::cuda_arg(x),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1946:34: error: expected primary-expression before '<' token
+vector_multi_sum_kernel<<<1, 128>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1946:43: error: expected primary-expression before '>' token
+vector_multi_sum_kernel<<<1, 128>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1967:30: error: expected primary-expression before '<' token
+inner_prod_8_kernel<< ^
+./viennacl/linalg/cuda/vector_operations.hpp:1968:61: error: expected primary-expression before '>' token
+VIENNACL_MDOT_WORKGROUP_SIZE>>>( viennacl::cuda_arg(x),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1999:34: error: expected primary-expression before '<' token
+vector_multi_sum_kernel<<<8, VIENNACL_MDOT_WORKGROUP_NUM>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:1999:67: error: expected primary-expression before '>' token
+vector_multi_sum_kernel<<<8, VIENNACL_MDOT_WORKGROUP_NUM>>>(viennacl::cuda_arg(temp),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::norm_kernel_floats(const NumericT*, unsigned int, unsigned int, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:2029:49: error: 'gridDim' was not declared in this scope
+unsigned int work_per_thread = (size1 - 1) / (gridDim.x * blockDim.x) + 1;
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2029:61: error: 'blockDim' was not declared in this scope
+unsigned int work_per_thread = (size1 - 1) / (gridDim.x * blockDim.x) + 1;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2030:30: error: 'blockIdx' was not declared in this scope
+unsigned int group_start = blockIdx.x * work_per_thread * blockDim.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2036:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2042:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2050:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2055:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2060:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2064:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = tmp;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2070:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2080:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2090:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2100:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::norm_kernel_integers(const NumericT*, unsigned int, unsigned int, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:2122:49: error: 'gridDim' was not declared in this scope
+unsigned int work_per_thread = (size1 - 1) / (gridDim.x * blockDim.x) + 1;
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2122:61: error: 'blockDim' was not declared in this scope
+unsigned int work_per_thread = (size1 - 1) / (gridDim.x * blockDim.x) + 1;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2123:30: error: 'blockIdx' was not declared in this scope
+unsigned int group_start = blockIdx.x * work_per_thread * blockDim.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2129:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2134:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2139:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2144:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2148:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = tmp;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2154:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2164:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2174:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2184:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::norm_kernel_unsigned_integers(const NumericT*, unsigned int, unsigned int, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:2206:49: error: 'gridDim' was not declared in this scope
+unsigned int work_per_thread = (size1 - 1) / (gridDim.x * blockDim.x) + 1;
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2206:61: error: 'blockDim' was not declared in this scope
+unsigned int work_per_thread = (size1 - 1) / (gridDim.x * blockDim.x) + 1;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2207:30: error: 'blockIdx' was not declared in this scope
+unsigned int group_start = blockIdx.x * work_per_thread * blockDim.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2213:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2218:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2223:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2228:41: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = group_start + threadIdx.x; i < group_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2232:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = tmp;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2238:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2248:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2258:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2268:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In static member function 'static void viennacl::linalg::cuda::detail::norm_kernel_launcher_integers::apply(const viennacl::vector_base&, viennacl::vector_base&, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:2288:29: error: expected primary-expression before '<' token
+norm_kernel_integers<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2288:40: error: expected primary-expression before '>' token
+norm_kernel_integers<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In static member function 'static void viennacl::linalg::cuda::detail::norm_kernel_launcher_unsigned_integers::apply(const viennacl::vector_base&, viennacl::vector_base&, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:2306:38: error: expected primary-expression before '<' token
+norm_kernel_unsigned_integers<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2306:49: error: expected primary-expression before '>' token
+norm_kernel_unsigned_integers<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In static member function 'static void viennacl::linalg::cuda::detail::norm_kernel_launcher_floats::apply(const viennacl::vector_base&, viennacl::vector_base&, unsigned int)':
+./viennacl/linalg/cuda/vector_operations.hpp:2325:27: error: expected primary-expression before '<' token
+norm_kernel_floats<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2325:38: error: expected primary-expression before '>' token
+norm_kernel_floats<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::vector_maxmin_kernel(const NumericT*, unsigned int, unsigned int, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:2512:25: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = threadIdx.x; i ^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2512:52: error: 'blockDim' was not declared in this scope
+for (unsigned int i = threadIdx.x; i ^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2520:14: error: 'threadIdx' was not declared in this scope
+tmp_buffer[threadIdx.x] = thread_minmax;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2522:30: error: 'blockDim' was not declared in this scope
+for (unsigned int stride = blockDim.x/2; stride > 0; stride /= 2)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2524:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::max_impl(const viennacl::vector_base&, viennacl::scalar&)':
+./viennacl/linalg/cuda/vector_operations.hpp:2555:25: error: expected primary-expression before '<' token
+vector_maxmin_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2555:36: error: expected primary-expression before '>' token
+vector_maxmin_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::min_impl(const viennacl::vector_base&, viennacl::scalar&)':
+./viennacl/linalg/cuda/vector_operations.hpp:2609:25: error: expected primary-expression before '<' token
+vector_maxmin_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2609:36: error: expected primary-expression before '>' token
+vector_maxmin_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::index_norm_inf_kernel(const NumericT*, unsigned int, unsigned int, unsigned int, unsigned int*)':
+./viennacl/linalg/cuda/vector_operations.hpp:2706:16: error: 'threadIdx' was not declared in this scope
+float_buffer[threadIdx.x] = 0;
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2712:54: error: 'blockDim' was not declared in this scope
+for (unsigned int i = threadIdx.x; i < size1; i += blockDim.x)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2725:30: error: 'blockDim' was not declared in this scope
+for (unsigned int stride = blockDim.x/2; stride > 0; stride /= 2)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2727:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'viennacl::vcl_size_t viennacl::linalg::cuda::index_norm_inf(const viennacl::vector_base&)':
+./viennacl/linalg/cuda/vector_operations.hpp:2759:26: error: expected primary-expression before '<' token
+index_norm_inf_kernel<<<1, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2759:35: error: expected primary-expression before '>' token
+index_norm_inf_kernel<<<1, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::plane_rotation_kernel(NumericT*, unsigned int, unsigned int, unsigned int, NumericT*, unsigned int, unsigned int, unsigned int, NumericT, NumericT)':
+./viennacl/linalg/cuda/vector_operations.hpp:2791:25: error: 'blockDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x; i < size1; i += blockDim.x * gridDim.x)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2791:38: error: 'blockIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x; i < size1; i += blockDim.x * gridDim.x)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2791:51: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x; i < size1; i += blockDim.x * gridDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2791:93: error: 'gridDim' was not declared in this scope
+for (unsigned int i = blockDim.x * blockIdx.x + threadIdx.x; i < size1; i += blockDim.x * gridDim.x)
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::plane_rotation(viennacl::vector_base&, viennacl::vector_base&, NumericT, NumericT)':
+./viennacl/linalg/cuda/vector_operations.hpp:2826:26: error: expected primary-expression before '<' token
+plane_rotation_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2826:37: error: expected primary-expression before '>' token
+plane_rotation_kernel<<<128, 128>>>(viennacl::cuda_arg(vec1),
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::scan_kernel_1(const NumericT*, unsigned int, unsigned int, unsigned int, NumericT*, unsigned int, unsigned int, unsigned int, NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:2858:49: error: 'gridDim' was not declared in this scope
+unsigned int work_per_thread = (sizeX - 1) / (gridDim.x * blockDim.x) + 1;
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2858:61: error: 'blockDim' was not declared in this scope
+unsigned int work_per_thread = (sizeX - 1) / (gridDim.x * blockDim.x) + 1;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2859:62: error: 'blockIdx' was not declared in this scope
+unsigned int block_start = work_per_thread * blockDim.x * blockIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2864:39: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = block_start + threadIdx.x; i < block_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2872:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2874:21: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2878:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2880:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2894:7: error: 'threadIdx' was not declared in this scope
+if (threadIdx.x == 0)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::scan_kernel_2(NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:2906:31: error: 'threadIdx' was not declared in this scope
+NumericT my_carry = carries[threadIdx.x];
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2910:41: error: 'blockDim' was not declared in this scope
+for(unsigned int stride = 1; stride < blockDim.x; stride *= 2)
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2912:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2914:19: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2918:17: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2920:17: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::scan_kernel_3(NumericT*, unsigned int, unsigned int, unsigned int, const NumericT*)':
+./viennacl/linalg/cuda/vector_operations.hpp:2934:49: error: 'gridDim' was not declared in this scope
+unsigned int work_per_thread = (sizeY - 1) / (gridDim.x * blockDim.x) + 1;
+^~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2934:61: error: 'blockDim' was not declared in this scope
+unsigned int work_per_thread = (sizeY - 1) / (gridDim.x * blockDim.x) + 1;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2935:62: error: 'blockIdx' was not declared in this scope
+unsigned int block_start = work_per_thread * blockDim.x * blockIdx.x;
+^~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2940:7: error: 'threadIdx' was not declared in this scope
+if (threadIdx.x == 0)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp:2943:17: error: there are no arguments to '__syncthreads' that depend on a template parameter, so a declaration of '__syncthreads' must be available [-fpermissive]
+__syncthreads();
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2946:39: error: 'threadIdx' was not declared in this scope
+for (unsigned int i = block_start + threadIdx.x; i < block_stop; i += blockDim.x)
+^~~~~~~~~
+./viennacl/linalg/cuda/vector_operations.hpp: In function 'void viennacl::linalg::cuda::detail::scan_impl(const viennacl::vector_base&, viennacl::vector_base&, bool)':
+./viennacl/linalg/cuda/vector_operations.hpp:2972:20: error: expected primary-expression before '<' token
+scan_kernel_1<<>>(viennacl::cuda_arg(input),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2972:51: error: expected primary-expression before '>' token
+scan_kernel_1<<>>(viennacl::cuda_arg(input),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2986:20: error: expected primary-expression before '<' token
+scan_kernel_2<<<1, block_num>>>(viennacl::cuda_arg(cuda_carries));
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2986:35: error: expected primary-expression before '>' token
+scan_kernel_2<<<1, block_num>>>(viennacl::cuda_arg(cuda_carries));
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2989:20: error: expected primary-expression before '<' token
+scan_kernel_3<<>>(viennacl::cuda_arg(output),
+^
+./viennacl/linalg/cuda/vector_operations.hpp:2989:51: error: expected primary-expression before '>' token
+scan_kernel_3<<>>(viennacl::cuda_arg(output),
+^
+[Compilation failed]

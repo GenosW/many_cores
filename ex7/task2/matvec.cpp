@@ -393,7 +393,7 @@ void benchmark_matvec(size_t points_per_direction, size_t max_nonzeros_per_row,
 }
 
 
-int main() {
+int main(int, char**){
   std::fstream csv;
 #ifdef TRUNC_CSV
   csv.open(csv_name, std::fstream::out | std::fstream::trunc);
