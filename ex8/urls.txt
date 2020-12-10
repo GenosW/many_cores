@@ -1,0 +1,7 @@
+https://gtx1080.360252.org/2020/ex8/ph_data_viennacl_cuda.csv
+https://gtx1080.360252.org/2020/ex8/ph_data_viennacl_ocl.csv
+
+https://gtx1080.360252.org/2020/ex8/ph_data_vexcl_ocl.csv
+https://gtx1080.360252.org/2020/ex8/ph_data_vexcl_ocl2.csv
+
+https://gtx1080.360252.org/2020/ex8/ph_data_boost_ocl.csv
