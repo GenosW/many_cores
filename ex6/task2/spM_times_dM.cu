@@ -162,6 +162,45 @@ __global__ void A_MatMul_Xcm(int N, int K,
   }
 }
 
+
+// Y= A * X
+__global__ void A_MatMul_Xrm_ik(int N, int K,
+  int *csr_rowoffsets, int *csr_colindices, double *csr_values,
+  double *X, double *Y)
+{
+  for (int tid = blockIdx.x * blockDim.x + threadIdx.x; tid < N; tid += blockDim.x * gridDim.x) {
+    int row_start = csr_rowoffsets[tid];
+    int row_end = csr_rowoffsets[tid + 1];
+
+    for (int i = row_start; i < row_end; i++) {
+      double aij = csr_values[i];
+      int colindex = csr_colindices[i];
+      for (int k = 0; k < K; ++k){
+        Y[k + tid*K] += aij * X[colindex*K + k];
+      }
+    }
+  }
+}
+
+// Y= A * X
+__global__ void A_MatMul_Xcm_ik(int N, int K,
+  int *csr_rowoffsets, int *csr_colindices, double *csr_values,
+  double *X, double *Y)
+{
+  for (int tid = blockIdx.x * blockDim.x + threadIdx.x; tid < N; tid += blockDim.x * gridDim.x) {
+    int row_start = csr_rowoffsets[tid];
+    int row_end = csr_rowoffsets[tid + 1];
+
+    for (int i = row_start; i < row_end; i++) {
+      double aij = csr_values[i];
+      int colindex = csr_colindices[i];
+      for (int k = 0; k < K; ++k){
+        Y[k + tid*K] += aij* X[colindex + k*N];
+      }
+    }
+  }
+}
+
 // // Y = A * X
 // __global__ void A_MatMul_Xrm(int N, int K, int *csr_rowoffsets,
 //   int *csr_colindices, double *csr_values,
@@ -207,7 +246,7 @@ __global__ void A_MatMul_Xcm(int N, int K,
 
 int main(void) {
   Timer timer;
-  std::vector<int> vec_Ns{100, 1024, 10000, 100489};
+  std::vector<int> vec_Ns{100, 1024, 10000, 100489, 1000000};
   // std::vector<int> vec_Ns{1000000};
   std::vector<int> vec_Ks{2, 4, 8, 16};
   // std::vector<int> vec_Ks{3, 5, 9, 15};
@@ -215,7 +254,7 @@ int main(void) {
 
 #ifdef CSV
   std::fstream csv_times;
-  std::string csv_times_name = "ph_data.csv";
+  std::string csv_times_name = "ph_data_ik.csv";
   csv_times.open(csv_times_name, std::fstream::out | std::fstream::trunc);
 
   std::string header = "N;K;time_single;time_rm_stacked;time_cm_stacked";
