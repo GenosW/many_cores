@@ -6,25 +6,15 @@
 #include <fstream>
 #include <cstdlib>
 #include "timer.hpp"
-// VexCL
-#include <stdexcept>
-// #define VEXCL_SHOW_KERNELS
-#define VEXCL_BACKEND_OPENCL // default
-//#define VEXCL_BACKEND_COMPUTE
-//#define VEXCL_BACKEND_CUDA
-#include <vexcl/vexcl.hpp>
+// thrust
+#include <thrust/host_vector.h>
+#include <thrust/inner_product.h>
+#include <thrust/device_vector.h>
+#include <thrust/sort.h>
 
 // DEFINES
 #define EX "ex8"
-#ifdef VEXCL_BACKEND_OPENCL
-    #define CSV_NAME "ph_data_vexcl_ocl.csv"
-#endif
-#ifdef VEXCL_BACKEND_COMPUTE
-    #define CSV_NAME "ph_data_vexcl_ocl2.csv"
-#endif
-#ifdef VEXCL_BACKEND_CUDA
-    #define CSV_NAME "ph_data_vexcl_ocl3.csv"
-#endif
+#define CSV_NAME "ph_data_thrust_cuda.csv"
 
 #define COUT
 #define NUM_TEST 5
@@ -61,16 +51,18 @@ double median(T *array, size_t size)
 //----------- functions for this program
 //
 
-double benchmark(vex::Context ctx, size_t N, double x_init, double y_init, std::vector<double>& results)
+double benchmark(size_t N, double x_init, double y_init, std::vector<double>& results)
 {
+
     Timer timer;
     timer.reset();
-    std::vector<double> x(N, x_init);
-    std::vector<double> y(N, y_init);
-    vex::vector<double> X(ctx, x);
-    vex::vector<double> Y(ctx, y);
+    thrust::host_vector<double> x(N, x_init);
+    thrust::host_vector<double> y(N, y_init);
 
-    vex::Reductor<double, vex::SUM> DOT(ctx);
+    thrust::device_vector<double> X = x;
+    thrust::device_vector<double> Y = y;
+    thrust::device_vector<double> TMP(N);
+    thrust::device_vector<double> TMP2(N);
     results[0] = timer.get();
 
     double dot;
@@ -78,13 +70,24 @@ double benchmark(vex::Context ctx, size_t N, double x_init, double y_init, std::
     std::vector<double> tmp(NUM_TEST, 0.0);
     for (int iter = 0; iter < NUM_TEST; iter++) {
         timer.reset(); 
-        dot = DOT( (X+Y)*(X-Y) );
+        thrust::transform(X.begin(), X.end(), 
+            Y.begin(), TMP.begin(), thrust::plus<double>{});
+        // I tried to reuse the vector X for the result of the last transform,
+        // but it did not work properly. I assume, that the reason is that these
+        // are asynchronous calls that can happen in parallel, 
+        // so it might happen that parts of X
+        // are overwritten before the first is finished.
+        // That seems weird...
+        thrust::transform(X.begin(), X.end(), 
+            Y.begin(), TMP2.begin(), thrust::minus<double>{});
+
+        dot = thrust::inner_product(TMP.begin(), TMP.end(), 
+                    TMP2.begin(), 0.0);
         tmp[iter] = timer.get();
     }
     results[1] = median(tmp);
 
     double true_dot = (x_init + y_init) * (x_init - y_init) * N;
-
 
 #ifdef COUT
     std::cout << "(x+y, x-y) = " << dot << " ?= " << true_dot << std::endl;
@@ -99,9 +102,6 @@ double benchmark(vex::Context ctx, size_t N, double x_init, double y_init, std::
 
 int main(int argc, char const *argv[])
 {
-     vex::Context ctx(vex::Filter::GPU&&vex::Filter::DoublePrecision);
-    std::cout << ctx << std::endl; // print list of selected devices
-
     double x_init = 1., y_init = 2.;
     std::vector<double> results(4, 0.0);
 
@@ -116,7 +116,7 @@ int main(int argc, char const *argv[])
 #ifdef COUT
         std::cout << "N: " <<  N << std::endl;
 #endif
-        benchmark(ctx, N, x_init, y_init, results);
+        benchmark(N, x_init, y_init, results);
         csv << N;
         std::for_each(results.begin(), results.end(), to_csv);
         csv << std::endl;
