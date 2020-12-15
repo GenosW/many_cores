@@ -137,7 +137,7 @@ double benchmark(size_t N, double x_init, double y_init, std::vector<double> &re
     for (int iter = 0; iter < NUM_TEST; iter++)
     {
         timer.reset();
-        some_asymmetry_relation<<<GRID_SIZE, BLOCK_SIZE>>>();
+        some_asymmetry_relation<<<GRID_SIZE, BLOCK_SIZE>>>(N, X, Y, DOT);
     cudaMemcpy(&dot, DOT, sizeof(double), cudaMemcpyDeviceToHost);
         tmp[iter] = timer.get();
     }

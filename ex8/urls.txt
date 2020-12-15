@@ -8,3 +8,5 @@ https://gtx1080.360252.org/2020/ex8/ph_data_boost_ocl.csv
 
 https://gtx1080.360252.org/2020/ex8/ph_data_thrust_cuda.csv
 
+https://gtx1080.360252.org/2020/ex8/ph_data_mykernel_cuda.csv
+https://gtx1080.360252.org/2020/ex8/ph_data_mykernel_ocl.csv

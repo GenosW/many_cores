@@ -84,6 +84,7 @@ double benchmark(size_t N, double x_init, double y_init, std::vector<double>& re
         dot = thrust::inner_product(TMP.begin(), TMP.end(), 
                     TMP2.begin(), 0.0);
         tmp[iter] = timer.get();
+        std::cout << "Took " << tmp[iter] << "s for this iteration" << std::endl;
     }
     results[1] = median(tmp);
 
