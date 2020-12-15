@@ -355,7 +355,7 @@ int main(void) {
   #endif
       for (int iter = 0; iter < TESTS; iter++){
         timer.reset();
-        A_MatMul_Xrm<<<GRID_SIZE, BLOCK_SIZE>>>(
+        A_MatMul_Xrm_ik<<<GRID_SIZE, BLOCK_SIZE>>>(
             N, K,
             cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values,
             cuda_X, cuda_Y);
@@ -370,7 +370,7 @@ int main(void) {
       cudaMemcpy(cuda_Y, Y2, sizeof(double) * N*K, cudaMemcpyHostToDevice);
       for (int iter = 0; iter < TESTS; iter++){
         timer.reset();
-        A_MatMul_Xcm<<<GRID_SIZE, BLOCK_SIZE>>>(
+        A_MatMul_Xcm_ik<<<GRID_SIZE, BLOCK_SIZE>>>(
             N, K,
             cuda_csr_rowoffsets, cuda_csr_colindices, cuda_csr_values,
             cuda_X, cuda_Y);

@@ -1,0 +1,96 @@
+Peter Holzner, 01426733
+
+# Exercise 6
+
+Dot Product with Warp Shuffles
+  Shared Memory Implementation: 1/1 Point   Remark: I like your atomicMax() and atomicMin() workaround.
+  Warp Shuffles: 1/1 Point
+  Performance Comparison: 1/1 Point
+  
+Sparse Matrix Times Dense Matrix
+  Hidden exercise to make it to 3 Points total: 1/1 Point    Remark: Sorry, I didn't add up the points correctly (1 + 1 != 3, even for large values of 1). To fix this, you'll get a Point for free to keep everthing concise.
+  Extend sparse matrix-vector product kernel: 1/1 Point      Remark: Swapping the loop over k and i should give better performance :-)
+  Compare performance: 1/1 Point
+
+
+Total: 6/6 Points
+
+
+# Exercise 5
+
+Inclusive and Exclusive Scan:
+ Describe in your own words: 1/1 Point
+ Inclusive scan by reuse: 1/1 Point        Remark: Just adding the original vector is clever! :-)
+ Inclusive scan through modification: 1/1 Point
+ Compare performance: 1/1 Point
+
+Finite Differences:
+ Count and store nonzeros: 1/1 Points 
+ Use exclusive_scan: 1/1 Points
+ Populate CSR arrays: 1/1 Points
+ Call CG solver: 1/1 Points
+ Benchmarks: 1/1 Points
+ 
+Total: 9/9 Points
+
+
+# Exercise 4
+
+Multiple Dot Products:
+ 8 dot products: 1/1 Point
+ Add loop: 1/1 Point
+ Plot execution times: 1/1 Point
+ Outline for general K: 1/1 Point
+ 
+Pipelined CG:
+ Implementation: 3/3 Points. Remark: The extra calls to cudaMemcpy() add some overhead. One could optimize this away as well.
+ Compare Execution: 1/1 Point
+ 
+Remark: Well done! :-)
+
+Total: 8/8 Points
+
+# Exercise 3
+
+Strided and Offset Memory Access: 2/2 Points
+Conjugate Gradients:
+ a) matvec-product: 0/1 Point
+ b) vector operations: 0/1 Point
+ c) Plot time and iterations: 0/1 Point
+ d) Solution time breakdown: 0/1 Point
+ e) Performance model: 0/1 Point
+
+General remark: Time constraints are nasty - I hope you'll find more time for the upcoming exercises :-)
+
+Total: 2/7 Points
+
+# Exercise 2
+
+Basic CUDA:
+ a) 1/1 Point
+ b) 1/1 Point
+ c) 1/1 Point
+ d) 1/1 Point
+ e) 1/1 Point
+ 
+Dot Product:
+  a) 2/2 Points.
+  b) 0/1 Point. Remark: The for-loop on the CPU is the culprit: "for ( int j = 0; j < blocks /2; j +=4) {...}" should be just "for ( int j = 0; j < blocks; ++j) result += h_block_sums[j];" (untested)
+  c) 1/1 Point
+Compare Performance: 1/1 Points
+
+Comment on your sidenote: 
+  #define BLOCK_SIZE xxxx
+is still one of the best ways to specify block sizes. The reason is that the compiler can then optimize the kernel for the particular thread block size. If the block size is a runtime parameter, this is not possible and a more general kernel (and hence often less efficient) will be generated.
+
+Total: 9/10 Points
+
+# Exercise 1
+
+About Yourself: 1/1 Point
+Expectations: 1/1 Point
+Summing Random Numbers in a Lecture Hall: 4/4 Points
+Bonus: Arbitrary Communication: 1 Point
+Bonus: Early Submission: 1 Point
+
+Total: 6 Points + 2 Bonus
