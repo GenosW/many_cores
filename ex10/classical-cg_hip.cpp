@@ -2,117 +2,46 @@
 #include "timer.hpp"
 #include <algorithm>
 #include <iostream>
+#include <fstream>
+#include <vector>
 // #include <stdio.h>
 #include "hip/hip_runtime.h"
 
+// DEFINES
+#define EX "ex10"
+#define CSV_NAME "ph_data_hip.csv"
+#define N_MAX_PRINT 32
+#define PRINT_ONLY 10
+#define NUM_TESTS 10 // should be uneven so we dont have to copy after each iteration
+
 #define GRID_SIZE 512
 #define BLOCK_SIZE 512
-
-/* I figured I could extend the STRINGIFY macro approach to 
- * also work for hip. I also simplified the define names a bit.
- * In the end, I didn't test it because I feared it would take too
- * much additional time - finite time is b*tch - and just used
- * it as a list of keywords to change to hipify by hand. */
-
-#define HIP
-// #define CUDA
-// #define OCL
-
-#ifdef HIP
-
-  #define HIP_ASSERT(x) (assert((x)==hipSuccess))
-  #undef CUDA
-  #undef OCL
-#endif
-
-#ifdef CUDA
-  #undef HIP
-  #undef OCL
-#endif
-
-#ifdef OCL
-  #undef CUDA
-  #undef HIP
-#endif
-
-// #ifdef HIP
-//   //
-//   // Transformation to HIP
-//   //
-//   // -- runtime
-//   #define DEVICE_ALLOC hipMalloc
-//   #define DEVICE_FREE hipFree
-
-//   // -- kernel language
-//   #define KERNEL __global__
-//   #define GLOBALMEM 
-//   #define LOCALMEM __shared__
-//   #define DEVICE_FUNC __device__
-//   #define BARRIER __syncthreads
-//   #define ATOMIC_ADD atomicAdd
-
-//   // -- thread management
-//   #define LOCALID hipThreadIdx_x
-//   #define GROUPID hipBlockIdx_x
-//   #define GLOBALID ((hipBlockDim_x * hipBlockIdx_x) + hipThreadIdx_x)
-
-//   #define LOCALSIZE hipBlockDim_x
-//   #define GLOBALSIZE (hipGridDim_x * hipBlockDim_x)
-// #endif
-
-// #ifdef CUDA
-//   //
-//   // Transformation to CUDA
-//   //
-//   // -- runtime
-//   #define DEVICE_ALLOC cudaMalloc
-//   #define DEVICE_FREE cudaFree
-
-//   // -- kernel language
-//   #define KERNEL __global__
-//   #define GLOBALMEM 
-//   #define LOCALMEM __shared__
-//   #define DEVICE_FUNC __device__
-//   #define BARRIER __syncthreads
-//   #define ATOMIC_ADD atomicAdd
-
-//   // -- thread management
-//   #define LOCALID threadIdx.x
-//   #define GROUPID blockIdx.x
-//   #define GLOBALID ((blockDim.x * blockIdx.x) + threadIdx.x)
-
-//   #define LOCALSIZE blockDim.x
-//   #define GLOBALSIZE (gridDim.x * blockDim.x)
-// #endif
-
-// // entry point, but need to account for multiple arguments AND need to actually force replacement before applying the macro
-// #define STRINGIFY(...) mFn2(__VA_ARGS__)
-// #define mFn2(ANS) #ANS
-
-
 #define USE_MY_ATOMIC_ADD
+#define HIP_ASSERT(x) (assert((x)==hipSuccess)) // only used it once
 
-using ulli = unsigned long long int;
 /** atomicAdd for doubles for hip for nvcc for many cores exercise 10 for me
  * by: Peter HOLZNER feat. NVIDIA
  * 
- * based on this little guy:
- * unsigned long long int atomicAdd(unsigned long long int* address,unsigned long long int val)
+ * - Ref: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomic-functions
  * 
  * 'Don't let your memes be dreams!'
  * - Probably Ghandi, idk
  */
 __device__ double 
-my_atomic_Add(double *p, double val) 
+my_atomic_Add(double* address, double val)
 {
-  ulli* address_as_ul = (ulli *) p; 
-  ulli old = *address_as_ul, assumed;
-  ulli val_as_ul =  (ulli) val;
-  do  {
-    assumed = old;
-    old = atomicAdd(address_as_ul, val_as_ul);
+  using ulli = unsigned long long int;
+  ulli* address_as_ull =
+                            (ulli*)address;
+  ulli old = *address_as_ull, assumed;
+  do {
+      assumed = old;
+      old = atomicCAS(address_as_ull, assumed,
+                      __double_as_longlong(val +
+                              __longlong_as_double(assumed)));
+
   } while (assumed != old);
-  return (double) old;
+  return __longlong_as_double(old);
 };
 
 // y = A * x
@@ -147,11 +76,12 @@ hip_vecadd2(int N, double *x, double *y, double alpha)
     x[i] = y[i] + alpha * x[i];
 }
 
-// result = (x, y)
+/**result = (x, y)
+ */
 __global__ void 
 hip_dot_product(int N, double *x, double *y, double *result)
 {
-  __shared__ double shared_mem[512];
+  __shared__ double shared_mem[BLOCK_SIZE];
 
   double dot = 0;
   for (int i = hipBlockIdx_x * hipBlockDim_x + hipThreadIdx_x; i < N; i += hipBlockDim_x * hipGridDim_x) {
@@ -186,10 +116,18 @@ hip_dot_product(int N, double *x, double *y, double *result)
  *
  *  The temporary arrays p, r, and Ap need to be allocated on the GPU for use
  * with hip. Modify as you see fit.
+ *
+ * Modifications:
+ * - returns runtime as double
+ * - iteration counter (iters) is passed as reference for logging to csv-file
+ * - replaced cuda with hip (literally search-and-replaced the word...)
+ * - implemented the hip-style kernel launches (although unnecessary for this
+ *   exercise since we pass it to nvcc anyway :D)
  */
-void conjugate_gradient(int N, // number of unknows
+double conjugate_gradient(int N, // number of unknows
                         int *csr_rowoffsets, int *csr_colindices,
-                        double *csr_values, double *rhs, double *solution)
+                        double *csr_values, double *rhs, double *solution,
+                        int& iters)
 //, double *init_guess)   // feel free to add a nonzero initial guess as needed
 {
   // initialize timer
@@ -227,30 +165,56 @@ void conjugate_gradient(int N, // number of unknows
 
   double initial_residual_squared = residual_norm_squared;
 
-  int iters = 0;
+  iters = 0;
   hipDeviceSynchronize();
   timer.reset();
   while (1) {
 
     // line 4: A*p:
-    hip_csr_matvec_product<<<GRID_SIZE, BLOCK_SIZE>>>(N, csr_rowoffsets, csr_colindices, csr_values, hip_p, hip_Ap);
+    // hip_csr_matvec_product<<<GRID_SIZE, BLOCK_SIZE>>>(N, csr_rowoffsets, csr_colindices, csr_values, hip_p, hip_Ap);
+    hipLaunchKernelGGL(hip_csr_matvec_product, // kernel
+      GRID_SIZE, BLOCK_SIZE,            // device params
+      0, 0,                             // shared mem, default stream
+      N, csr_rowoffsets, csr_colindices, csr_values, hip_p, hip_Ap       // kernel arguments
+    );
 
     // lines 5,6:
     hipMemcpy(hip_scalar, &zero, sizeof(double), hipMemcpyHostToDevice);
-    hip_dot_product<<<GRID_SIZE, BLOCK_SIZE>>>(N, hip_p, hip_Ap, hip_scalar);
+    // hip_dot_product<<<GRID_SIZE, BLOCK_SIZE>>>(N, hip_p, hip_Ap, hip_scalar);
+    hipLaunchKernelGGL(hip_dot_product, // kernel
+      GRID_SIZE, BLOCK_SIZE,            // device params
+      0, 0,                             // shared mem, default stream
+      N, hip_p, hip_Ap, hip_scalar      // kernel arguments
+    );
     hipMemcpy(&alpha, hip_scalar, sizeof(double), hipMemcpyDeviceToHost);
     alpha = residual_norm_squared / alpha;
 
     // line 7:
-    hip_vecadd<<<GRID_SIZE, BLOCK_SIZE>>>(N, hip_solution, hip_p, alpha);
+    // hip_vecadd<<<GRID_SIZE, BLOCK_SIZE>>>(N, hip_solution, hip_p, alpha);
+    hipLaunchKernelGGL(hip_vecadd,    // kernel
+      GRID_SIZE, BLOCK_SIZE,          // device params
+      0, 0,                           // shared mem, default stream
+      N, hip_solution, hip_p, alpha   // kernel arguments
+    );
 
     // line 8:
-    hip_vecadd<<<GRID_SIZE, BLOCK_SIZE>>>(N, hip_r, hip_Ap, -alpha);
+    // hip_vecadd<<<GRID_SIZE, BLOCK_SIZE>>>(N, hip_r, hip_Ap, -alpha);
+    hipLaunchKernelGGL(hip_vecadd, // kernel
+      GRID_SIZE, BLOCK_SIZE,       // device params
+      0, 0,                        // shared mem, default stream
+      N, hip_r, hip_Ap, -alpha     // kernel arguments
+    );
 
     // line 9:
     beta = residual_norm_squared;
     HIP_ASSERT(hipMemcpy(hip_scalar, &zero, sizeof(double), hipMemcpyHostToDevice)); // just checking if this works properly
-    hip_dot_product<<<GRID_SIZE, BLOCK_SIZE>>>(N, hip_r, hip_r, hip_scalar);
+    // hipMemcpy(hip_scalar, &zero, sizeof(double), hipMemcpyHostToDevice);
+    // hip_dot_product<<<GRID_SIZE, BLOCK_SIZE>>>(N, hip_r, hip_r, hip_scalar);
+    hipLaunchKernelGGL(hip_dot_product, // kernel
+      GRID_SIZE, BLOCK_SIZE,            // device params
+      0, 0,                             // shared mem, default stream
+      N, hip_r, hip_r, hip_scalar       // kernel arguments
+    );
     hipMemcpy(&residual_norm_squared, hip_scalar, sizeof(double), hipMemcpyDeviceToHost);
 
     // line 10:
@@ -262,7 +226,12 @@ void conjugate_gradient(int N, // number of unknows
     beta = residual_norm_squared / beta;
 
     // line 12:
-    hip_vecadd2<<<GRID_SIZE, BLOCK_SIZE>>>(N, hip_p, hip_r, beta);
+    // hip_vecadd2<<<GRID_SIZE, BLOCK_SIZE>>>(N, hip_p, hip_r, beta);
+    hipLaunchKernelGGL(hip_vecadd2, // kernel
+      GRID_SIZE, BLOCK_SIZE,            // device params
+      0, 0,                             // shared mem, default stream
+      N, hip_p, hip_r, beta      // kernel arguments
+    );
 
     if (iters > 10000)
       break; // solver didn't converge
@@ -271,7 +240,8 @@ void conjugate_gradient(int N, // number of unknows
   hipMemcpy(solution, hip_solution, sizeof(double) * N, hipMemcpyDeviceToHost);
 
   hipDeviceSynchronize();
-  std::cout << "Time elapsed: " << timer.get() << " (" << timer.get() / iters << " per iteration)" << std::endl;
+  double runtime = timer.get();
+  std::cout << "Time elapsed: " << runtime << " (" << runtime / iters << " per iteration)" << std::endl;
 
   if (iters > 10000)
     std::cout << "Conjugate Gradient did NOT converge within 10000 iterations"
@@ -285,6 +255,8 @@ void conjugate_gradient(int N, // number of unknows
   hipFree(hip_Ap);
   hipFree(hip_solution);
   hipFree(hip_scalar);
+
+  return runtime;
 }
 
 /** Solve a system with `points_per_direction * points_per_direction` unknowns
@@ -336,7 +308,8 @@ void solve_system(int points_per_direction) {
   //
   // Call Conjugate Gradient implementation with GPU arrays
   //
-  conjugate_gradient(N, hip_csr_rowoffsets, hip_csr_colindices, hip_csr_values, rhs, solution);
+  int iters = 0; // pass into the CG so we can track it
+  double runtime = conjugate_gradient(N, hip_csr_rowoffsets, hip_csr_colindices, hip_csr_values, rhs, solution, iters);
 
   //
   // Check for convergence:
@@ -344,6 +317,19 @@ void solve_system(int points_per_direction) {
   double residual_norm = relative_residual(N, csr_rowoffsets, csr_colindices, csr_values, rhs, solution);
   std::cout << "Relative residual norm: " << residual_norm
             << " (should be smaller than 1e-6)" << std::endl;
+
+  // not optimal (efficient), but minimally invasive --> easy to copy
+  std::ofstream csv;
+  csv.open(CSV_NAME, std::fstream::out | std::fstream::app);
+  csv << points_per_direction << ";" 
+    << N << ";"
+    << runtime << ";"
+    << residual_norm << ";"
+    << iters << std::endl;
+  csv.close();
+
+  for (int i = 0; i < N; i++)
+    std::cout << solution[i] << std::endl;
 
   hipFree(hip_csr_rowoffsets);
   hipFree(hip_csr_colindices);
@@ -357,15 +343,28 @@ void solve_system(int points_per_direction) {
 
 int main() {
 
+  std::ofstream csv;
+  csv.open(CSV_NAME, std::fstream::out | std::fstream::trunc);
+  csv << "p;N;runtime;residual;iterations" << std::endl;
+  csv.close();
+
   hipDeviceProp_t devProp;
   hipGetDeviceProperties(&devProp, 0);
   std::cout << " System minor " << devProp.minor << std::endl;
   std::cout << " System major " << devProp.major << std::endl;
   std::cout << " agent prop name " << devProp.name << std::endl;
-
   std::cout << "hip Device prop succeeded " << std::endl ;
 
-  solve_system(10); // solves a system with 100*100 unknowns
+  // std::vector<int> p_per_dir{ 10, 100, 500,1000, 1500};
+
+  std::vector<int> p_per_dir{ 10};
+
+  for (auto& p : p_per_dir)
+  {
+    std::cout << "--------------------------" << std::endl;
+    solve_system(p); // solves a system with p*p unknowns
+  }
+  std::cout << "\nData: https://gtx1080.360252.org/2020/" << EX << "/" << CSV_NAME;
 
   return EXIT_SUCCESS;
 }

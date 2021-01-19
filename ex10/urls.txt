@@ -1,2 +1,4 @@
-https://gtx1080.360252.org/2020/ex9/ph_data_omp.csv
-https://gtx1080.360252.org/2020/ex9/ph_data_transpose.csv
+https://gtx1080.360252.org/2020/ex10/ph_data_hip.csv
+https://gtx1080.360252.org/2020/ex10/ph_data_cuda.csv
+https://gtx1080.360252.org/2020/ex10/ph_data_host.csv
+https://gtx1080.360252.org/2020/ex10/ph_data_sycl.csv

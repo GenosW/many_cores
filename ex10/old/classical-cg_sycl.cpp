@@ -16,10 +16,8 @@
 #define PRINT_ONLY 10
 #define MAX_ITERS 100
 
-#define GRID_SIZE 4
-#define BLOCK_SIZE 4
-
-int max_iters = 11;
+#define GRID_SIZE 8
+#define BLOCK_SIZE 8
 
 /**by_sycl
  * 
@@ -324,7 +322,7 @@ double conjugate_gradient(size_t N,  // number of unknows
     by_sycl::update(queue, N, p_buff, r_buff, beta);
                     
     queue.wait_and_throw();
-    if (iters > max_iters) break;  // solver didn't converge
+    if (iters > 1000) break;  // solver didn't converge
     ++iters;
 
   }
@@ -416,19 +414,12 @@ int main() {
   csv << "p;N;runtime;residual;iterations" << std::endl;
   csv.close();
 
-  std::vector<int> p_per_dir{ 10, 100, 500, 1000};
+  std::vector<int> p_per_dir{ 10, 100, 500,1000, 1500};
 
-  max_iters = 11;
   for (auto& p : p_per_dir)
   {
     std::cout << "--------------------------" << std::endl;
     solve_system(p); // solves a system with p*p unknowns
-    if (p == 10)
-      max_iters = 151;
-    if (p == 100)
-      max_iters = 817;
-    if (p == 500)
-      max_iters = 1001;
   }
   std::cout << "\nData: https://gtx1080.360252.org/2020/" << EX << "/" << CSV_NAME;
 
