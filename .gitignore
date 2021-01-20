@@ -8,3 +8,5 @@ marks
 *.code-workspace
 .vscode
 build
+docs/lecture*
+docs/feedback*
