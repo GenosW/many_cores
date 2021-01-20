@@ -1,0 +1,52 @@
+## Feedback form for CSE Many-Core Course 360.252
+
+# Content
+
+* Did the course content match your expectations?
+
+* Which subject(s) did you find particularly interesting or relevant (if any)?
+
+* Which subject(s) did you find less interesting or relevant (if any)?
+
+* Which content should be added or removed (if any)?
+
+
+# Exercises
+
+* How do you rate the difficulty of the exercises?
+
+* How do you rate the time required to complete the exercises?
+
+* Which additional features should the online code execution platform have?
+
+* A possible alterative is the following:
+  The online platform could automatically verify submissions against a test set and provide immediate feedback.
+  Thus, students would tweak their code until the system accepts the solution(s).
+  No report would have to be written, so the exercise will be focused on the code only, but not on summarizing and communicating the obtained results.
+  What do you think of such a system? Good? Bad?
+ 
+
+# Misc
+
+* If you were to hold the lecture next winter term, what would you change?
+
+* Is there anything else that you want to share to enhance future editions of this course?
+
+--------------------
+
+# Claim Chocolate
+
+In order to receive a Zotter chocolate bar as a "Thank you" for taking the time to complete the feedback, please provide a mail address with the feedback form.
+To ensure that the feedback remains anonymous (regardless of whether you want to remain anonymous or not), please use the following format:
+
+ << Your personal code word >>
+ POSTLAGERND
+ Musterstrasse 123
+ 1230 Wien
+
+The address needs to match the address of the post office from which you want to pick up the chocolate, see also https://www.post.at/p/a/postlagernd
+Chocolate will be mailed out on the Monday following the upload of this form and should be available at your post office from Wednesday.
+Please pick up within 14 days!
+
+Upload the filled-out form at https://owncloud.tuwien.ac.at/index.php/s/Vwd0PoZEiK2oSZp no later than February 7.
+Thanks!
